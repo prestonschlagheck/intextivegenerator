@@ -23,8 +23,8 @@ export const Hero: React.FC = () => {
         <div className="absolute bottom-0 right-16 h-[380px] w-[380px] rounded-full bg-persian/20 blur-3xl" />
       </div>
 
-      <div className="container-max relative flex flex-col gap-16 lg:flex-row lg:items-start">
-        <div className="flex max-w-xl flex-col space-y-8">
+      <div className="container-max relative flex flex-col gap-16 lg:flex-row lg:items-stretch">
+        <div className="flex max-w-xl flex-col gap-8 lg:self-stretch">
           <Reveal>
             <p className="text-sm font-semibold uppercase tracking-[0.26em] text-white">
               {heroData.overline}
@@ -40,38 +40,41 @@ export const Hero: React.FC = () => {
               {heroData.subtitle}
             </p>
           </Reveal>
-          <Reveal delay={0.18}>
-            <div className="flex flex-col gap-4 sm:flex-row">
-              <Button size="lg" asChild>
-                <Link href={heroData.primaryAction.href}>{heroData.primaryAction.label}</Link>
-              </Button>
-              <Button variant="secondary" size="lg" asChild>
-                <Link href={heroData.secondaryAction.href}>{heroData.secondaryAction.label}</Link>
-              </Button>
-            </div>
-          </Reveal>
+          {/* Bottom group anchored to align with right-hand card bottom */}
+          <div className="mt-auto flex flex-col gap-6">
+            <Reveal delay={0.18}>
+              <div className="flex flex-col gap-4 sm:flex-row">
+                <Button size="lg" asChild>
+                  <Link href={heroData.primaryAction.href}>{heroData.primaryAction.label}</Link>
+                </Button>
+                <Button variant="secondary" size="lg" asChild>
+                  <Link href={heroData.secondaryAction.href}>{heroData.secondaryAction.label}</Link>
+                </Button>
+              </div>
+            </Reveal>
 
-          <div className="grid gap-4 sm:grid-cols-3 items-end">
-            {heroData.statHighlights.map((stat, index) => (
-              <Reveal key={stat.id} delay={0.2 + index * 0.06}>
-                <div className="glass-light glass-grain glass-interactive group flex flex-col gap-2 rounded-[28px] p-4 text-white">
-                  <div className="glass-content flex items-center gap-2 text-white/90">
-                    <Icon name={stat.icon as IconName} size={18} />
-                    <span className="text-xs font-medium uppercase tracking-[0.2em]">
-                      {stat.label}
-                    </span>
+            <div className="grid gap-4 sm:grid-cols-3 items-end">
+              {heroData.statHighlights.map((stat, index) => (
+                <Reveal key={stat.id} delay={0.2 + index * 0.06}>
+                  <div className="glass-light glass-grain glass-interactive group flex h-full flex-col gap-2 rounded-[28px] p-4 text-white">
+                    <div className="glass-content flex items-center gap-2 text-white/90">
+                      <Icon name={stat.icon as IconName} size={18} />
+                      <span className="text-xs font-medium uppercase tracking-[0.2em]">
+                        {stat.label}
+                      </span>
+                    </div>
+                    <p className="glass-content mt-auto text-2xl font-semibold tracking-tight text-white">
+                      <CountUp
+                        target={Number(String(stat.value).toString().replace(/[^\d.]/g, ""))}
+                        durationMs={2000}
+                        decimals={String(stat.value).includes(".") ? 1 : 0}
+                        suffix={stat.suffix ? String(stat.suffix) : String(String(stat.value).match(/[%+]/) ?? "")}
+                      />
+                    </p>
                   </div>
-                  <p className="glass-content text-2xl font-semibold tracking-tight text-white">
-                    <CountUp
-                      target={Number(String(stat.value).toString().replace(/[^\d.]/g, ""))}
-                      durationMs={2000}
-                      decimals={String(stat.value).includes(".") ? 1 : 0}
-                      suffix={stat.suffix ? String(stat.suffix) : String(String(stat.value).match(/[%+]/) ?? "")}
-                    />
-                  </p>
-                </div>
-              </Reveal>
-            ))}
+                </Reveal>
+              ))}
+            </div>
           </div>
         </div>
 
