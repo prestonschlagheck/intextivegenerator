@@ -15,9 +15,6 @@ import { Footer } from "./components/Footer";
 import { LoginModal } from "@/app/admin/components/LoginModal";
 import { useAuthStore } from "@/lib/store/useAuthStore";
 
-// Force dynamic rendering for client-side features
-export const dynamic = "force-dynamic";
-
 const MarketingPage: React.FC = () => {
   const [isLoginOpen, setIsLoginOpen] = React.useState(false);
   const [mounted, setMounted] = React.useState(false);

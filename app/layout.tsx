@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
 
@@ -8,6 +8,10 @@ const dmSans = DM_Sans({
   variable: "--font-dm-sans",
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  themeColor: "#f8f8f8",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://glc-template.vercel.app"),
@@ -25,7 +29,6 @@ export const metadata: Metadata = {
     "professional development",
   ],
   authors: [{ name: "Global Learning Consortium" }],
-  themeColor: "#f8f8f8",
   alternates: {
     canonical: "https://glc-template.vercel.app",
   },
