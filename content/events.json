@@ -1,58 +1,58 @@
 [
   {
     "id": "event-01",
-    "conference": "Learning Futures Summit",
-    "date": "2026-01-18",
-    "location": "Lisbon, Portugal",
-    "type": "Summit",
-    "link": "https://example.com/events/learning-futures-summit"
+    "conference": "Conference Name Here",
+    "date": "2025-01-01",
+    "location": "City, Country",
+    "type": "Event Type",
+    "link": "https://example.com/events/event-1"
   },
   {
     "id": "event-02",
-    "conference": "Equity Leadership Forum",
-    "date": "2025-12-05",
-    "location": "Atlanta, USA",
-    "type": "Forum",
-    "link": "https://example.com/events/equity-leadership-forum"
+    "conference": "Conference Name Here",
+    "date": "2025-01-01",
+    "location": "City, Country",
+    "type": "Event Type",
+    "link": "https://example.com/events/event-2"
   },
   {
     "id": "event-03",
-    "conference": "Global Fellows Congress",
-    "date": "2025-11-14",
-    "location": "Singapore",
-    "type": "Congress",
-    "link": "https://example.com/events/global-fellows-congress"
+    "conference": "Conference Name Here",
+    "date": "2025-01-01",
+    "location": "City, Country",
+    "type": "Event Type",
+    "link": "https://example.com/events/event-3"
   },
   {
     "id": "event-04",
-    "conference": "Digital Fluency Expo",
-    "date": "2025-10-21",
-    "location": "Toronto, Canada",
-    "type": "Expo",
-    "link": "https://example.com/events/digital-fluency-expo"
+    "conference": "Conference Name Here",
+    "date": "2025-01-01",
+    "location": "City, Country",
+    "type": "Event Type",
+    "link": "https://example.com/events/event-4"
   },
   {
     "id": "event-05",
-    "conference": "Applied Impact Residency Showcase",
-    "date": "2025-09-30",
-    "location": "Virtual",
-    "type": "Virtual",
-    "link": "https://example.com/events/applied-impact-showcase"
+    "conference": "Conference Name Here",
+    "date": "2025-01-01",
+    "location": "City, Country",
+    "type": "Event Type",
+    "link": "https://example.com/events/event-5"
   },
   {
     "id": "event-06",
-    "conference": "Leadership Design Retreat",
-    "date": "2025-08-19",
-    "location": "Copenhagen, Denmark",
-    "type": "Retreat",
-    "link": "https://example.com/events/leadership-design-retreat"
+    "conference": "Conference Name Here",
+    "date": "2025-01-01",
+    "location": "City, Country",
+    "type": "Event Type",
+    "link": "https://example.com/events/event-6"
   },
   {
     "id": "event-07",
-    "conference": "Consortium Strategy Forum",
-    "date": "2025-07-24",
-    "location": "Austin, USA",
-    "type": "Forum",
-    "link": "https://example.com/events/consortium-strategy-forum"
+    "conference": "Conference Name Here",
+    "date": "2025-01-01",
+    "location": "City, Country",
+    "type": "Event Type",
+    "link": "https://example.com/events/event-7"
   }
 ]

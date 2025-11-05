@@ -1,44 +1,44 @@
 [
   {
     "id": "resource-01",
-    "title": "Leadership Playbook",
-    "description": "Download the signature framework aligning goals, data, and community impact.",
-    "href": "https://example.com/resources/leadership-playbook",
-    "category": "Guides"
+    "title": "Resource 1 Title Here",
+    "description": "Resource description goes here",
+    "href": "https://example.com/resources/resource-1",
+    "category": "Category"
   },
   {
     "id": "resource-02",
-    "title": "Equity Metrics Toolkit",
-    "description": "A measurement toolkit for closing opportunity gaps across campuses.",
-    "href": "https://example.com/resources/equity-metrics",
-    "category": "Toolkits"
+    "title": "Resource 2 Title Here",
+    "description": "Resource description goes here",
+    "href": "https://example.com/resources/resource-2",
+    "category": "Category"
   },
   {
     "id": "resource-03",
-    "title": "Consortium Benchmark Report",
-    "description": "Annual benchmarking data with sector-leading insights.",
-    "href": "https://example.com/resources/benchmark-report",
-    "category": "Reports"
+    "title": "Resource 3 Title Here",
+    "description": "Resource description goes here",
+    "href": "https://example.com/resources/resource-3",
+    "category": "Category"
   },
   {
     "id": "resource-04",
-    "title": "Learning Futures Forecast",
-    "description": "Scenario planning resource for academic strategy teams.",
-    "href": "https://example.com/resources/futures-forecast",
-    "category": "Forecasts"
+    "title": "Resource 4 Title Here",
+    "description": "Resource description goes here",
+    "href": "https://example.com/resources/resource-4",
+    "category": "Category"
   },
   {
     "id": "resource-05",
-    "title": "Inclusive Design Checklist",
-    "description": "Practical checklist for inclusive program design.",
-    "href": "https://example.com/resources/inclusive-design",
-    "category": "Checklists"
+    "title": "Resource 5 Title Here",
+    "description": "Resource description goes here",
+    "href": "https://example.com/resources/resource-5",
+    "category": "Category"
   },
   {
     "id": "resource-06",
-    "title": "Funding Readiness Canvas",
-    "description": "A canvas for aligning investments with learning outcomes.",
-    "href": "https://example.com/resources/funding-readiness",
-    "category": "Canvas"
+    "title": "Resource 6 Title Here",
+    "description": "Resource description goes here",
+    "href": "https://example.com/resources/resource-6",
+    "category": "Category"
   }
 ]

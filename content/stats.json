@@ -1,34 +1,34 @@
 [
   {
-    "id": "outcomes",
+    "id": "stat-1",
     "icon": "chartLineUp",
-    "value": "38%",
-    "label": "Increase in learner outcomes",
-    "description": "Institutions leveraging our framework report sustained gains across leadership benchmarks.",
+    "value": "#",
+    "label": "Statistic 1 label here",
+    "description": "Description of statistic 1 goes here",
     "href": "#key-statistics"
   },
   {
-    "id": "cohorts",
+    "id": "stat-2",
     "icon": "usersThree",
-    "value": "24",
-    "label": "Global leadership cohorts",
-    "description": "Curated peer groups spanning five continents with executive facilitation.",
+    "value": "#",
+    "label": "Statistic 2 label here",
+    "description": "Description of statistic 2 goes here",
     "href": null
   },
   {
-    "id": "resources",
+    "id": "stat-3",
     "icon": "folders",
-    "value": "180+",
-    "label": "Research assets",
-    "description": "Premium playbooks, case studies, and toolkits available on demand.",
+    "value": "#",
+    "label": "Statistic 3 label here",
+    "description": "Description of statistic 3 goes here",
     "href": "#resources"
   },
   {
-    "id": "satisfaction",
+    "id": "stat-4",
     "icon": "handshake",
-    "value": "4.9/5",
-    "label": "Program satisfaction",
-    "description": "Leaders rate our immersive programs as best-in-class for strategic alignment.",
+    "value": "#",
+    "label": "Statistic 4 label here",
+    "description": "Description of statistic 4 goes here",
     "href": null
   }
 ]

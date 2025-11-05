@@ -1,74 +1,74 @@
 [
   {
     "id": "faculty-01",
-    "name": "Dr. Ayana Reeve",
-    "role": "Executive Director",
-    "affiliation": "Global Learning Consortium",
-    "focus": ["Systems Leadership", "Policy"],
+    "name": "Name Here",
+    "role": "Position Here",
+    "affiliation": "Company/School Here",
+    "focus": ["Focus Area 1", "Focus Area 2"],
     "avatar": "/Images/Logos/Placeholders/Headshot Placeholder.png"
   },
   {
     "id": "faculty-02",
-    "name": "Prof. Malik Sosa",
-    "role": "Senior Fellow",
-    "affiliation": "Horizon University",
-    "focus": ["Innovation", "Design"],
+    "name": "Name Here",
+    "role": "Position Here",
+    "affiliation": "Company/School Here",
+    "focus": ["Focus Area 1", "Focus Area 2"],
     "avatar": "/Images/Logos/Placeholders/Headshot Placeholder.png"
   },
   {
     "id": "faculty-03",
-    "name": "Dr. Camila Duarte",
-    "role": "Director of Equity Impact",
-    "affiliation": "Metro Learning Lab",
-    "focus": ["Equity", "Community Partnerships"],
+    "name": "Name Here",
+    "role": "Position Here",
+    "affiliation": "Company/School Here",
+    "focus": ["Focus Area 1", "Focus Area 2"],
     "avatar": "/Images/Logos/Placeholders/Headshot Placeholder.png"
   },
   {
     "id": "faculty-04",
-    "name": "Elena Grayson",
-    "role": "Program Architect",
-    "affiliation": "Southwest Leadership Institute",
-    "focus": ["Curriculum", "Digital Transformation"],
+    "name": "Name Here",
+    "role": "Position Here",
+    "affiliation": "Company/School Here",
+    "focus": ["Focus Area 1", "Focus Area 2"],
     "avatar": "/Images/Logos/Placeholders/Headshot Placeholder.png"
   },
   {
     "id": "faculty-05",
-    "name": "Dr. Hiro Tanaka",
-    "role": "Applied Research Lead",
-    "affiliation": "Pacific Nexus",
-    "focus": ["Research", "Analytics"],
+    "name": "Name Here",
+    "role": "Position Here",
+    "affiliation": "Company/School Here",
+    "focus": ["Focus Area 1", "Focus Area 2"],
     "avatar": "/Images/Logos/Placeholders/Headshot Placeholder.png"
   },
   {
     "id": "faculty-06",
-    "name": "Prof. Leila Navarro",
-    "role": "Residency Mentor",
-    "affiliation": "Latitude College",
-    "focus": ["Mentorship", "Global Partnerships"],
+    "name": "Name Here",
+    "role": "Position Here",
+    "affiliation": "Company/School Here",
+    "focus": ["Focus Area 1", "Focus Area 2"],
     "avatar": "/Images/Logos/Placeholders/Headshot Placeholder.png"
   },
   {
     "id": "faculty-07",
-    "name": "Dr. Rafael Mendes",
-    "role": "Learning Futures Council",
-    "affiliation": "Nova School of Education",
-    "focus": ["Futures", "Strategy"],
+    "name": "Name Here",
+    "role": "Position Here",
+    "affiliation": "Company/School Here",
+    "focus": ["Focus Area 1", "Focus Area 2"],
     "avatar": "/Images/Logos/Placeholders/Headshot Placeholder.png"
   },
   {
     "id": "faculty-08",
-    "name": "Sasha Imani",
-    "role": "Community Network Lead",
-    "affiliation": "Equity Forward",
-    "focus": ["Community", "Equity"],
+    "name": "Name Here",
+    "role": "Position Here",
+    "affiliation": "Company/School Here",
+    "focus": ["Focus Area 1", "Focus Area 2"],
     "avatar": "/Images/Logos/Placeholders/Headshot Placeholder.png"
   },
   {
     "id": "faculty-09",
-    "name": "Dr. Leon Winters",
-    "role": "Chief Learning Analyst",
-    "affiliation": "Global Learning Consortium",
-    "focus": ["Data", "Measurement"],
+    "name": "Name Here",
+    "role": "Position Here",
+    "affiliation": "Company/School Here",
+    "focus": ["Focus Area 1", "Focus Area 2"],
     "avatar": "/Images/Logos/Placeholders/Headshot Placeholder.png"
   }
 ]
