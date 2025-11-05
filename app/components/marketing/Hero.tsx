@@ -7,7 +7,7 @@ import Link from "next/link";
 import heroData from "@/content/hero.json";
 import { Button } from "@/components/primitives/Button";
 import { Reveal } from "@/components/primitives/Reveal";
-import { Icon, type IconName } from "@/components/primitives/Icon";
+import { Icon } from "@/components/primitives/Icon";
 import { CountUp } from "@/components/primitives/CountUp";
 
 export const Hero: React.FC = () => {
@@ -57,8 +57,7 @@ export const Hero: React.FC = () => {
               {heroData.statHighlights.map((stat, index) => (
                 <Reveal key={stat.id} delay={0.2 + index * 0.06}>
                   <div className="glass-light glass-grain glass-interactive group flex h-full flex-col gap-2 rounded-[28px] p-4 text-white">
-                    <div className="glass-content flex items-center gap-2 text-white/90">
-                      <Icon name={stat.icon as IconName} size={18} />
+                    <div className="glass-content text-white/90">
                       <span className="text-xs font-medium uppercase tracking-[0.2em]">
                         {stat.label}
                       </span>
