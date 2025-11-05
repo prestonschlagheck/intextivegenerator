@@ -22,10 +22,10 @@ export const ResourceCenter: React.FC = () => {
               Resource Center
             </span>
             <h2 className="text-[2.25rem] font-semibold tracking-[-0.015em] text-bluewhale whitespace-nowrap">
-              Premium toolkits and intelligence for continuous innovation.
+              [Title of section goes here]
             </h2>
             <p className="text-base leading-relaxed text-bluewhale/70 whitespace-nowrap">
-              Access curated guides, analytics frameworks, and funding resources designed to support implementation teams before, during, and after each program.
+              [Subtitle for section goes here]
             </p>
             {/* Bulleted list removed per request */}
           </div>

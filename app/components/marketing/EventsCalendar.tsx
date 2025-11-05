@@ -20,10 +20,10 @@ export const EventsCalendar: React.FC = () => {
             Upcoming Conferences
           </span>
           <h2 className="text-[2.25rem] font-semibold tracking-[-0.015em] text-bluewhale whitespace-nowrap">
-            Connect with peers shaping the future of learning.
+            [Title of section goes here]
           </h2>
           <p className="text-base leading-relaxed text-bluewhale/70 whitespace-nowrap">
-            Join executive briefings, immersive forums, and curated residencies to exchange best practices with learning leaders worldwide.
+            [Subtitle for section goes here]
           </p>
         </Reveal>
       </div>

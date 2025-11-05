@@ -51,7 +51,7 @@ export const Hero: React.FC = () => {
             </div>
           </Reveal>
 
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-3 items-end">
             {heroData.statHighlights.map((stat, index) => (
               <Reveal key={stat.id} delay={0.2 + index * 0.06}>
                 <div className="glass-light glass-grain glass-interactive group flex flex-col gap-2 rounded-[28px] p-4 text-white">
@@ -92,19 +92,19 @@ export const Hero: React.FC = () => {
               <div className="flex items-center gap-2">
                 <div className="rounded-[var(--radius-pill)] bg-bluewhale/12 backdrop-blur-sm px-3 py-1 text-xs font-medium text-white border border-white/15 inline-flex items-center gap-1.5">
                   <Icon name="certificate" size={14} />
-                  <span>1 credit</span>
+                  <span>X credits</span>
                 </div>
                 <div className="rounded-[var(--radius-pill)] bg-bluewhale/12 backdrop-blur-sm px-3 py-1 text-xs font-medium text-white border border-white/15 inline-flex items-center gap-1.5">
                   <Icon name="clock" size={14} />
-                  <span>2 hours</span>
+                  <span>X hours</span>
                 </div>
               </div>
               <div className="space-y-2">
                 <h3 className="text-[1.5rem] font-semibold text-white">
-                  Immersive Leadership Lab
+                  Featured Image or Program
                 </h3>
                 <p className="text-sm leading-relaxed text-white">
-                  Executive session on cross-campus innovation and strategic transformation.
+                  Featured image or program description
                 </p>
               </div>
               <div className="mt-auto flex justify-end">

@@ -19,10 +19,10 @@ export const NewsFeed: React.FC = () => {
             Latest News & Updates
           </span>
           <h2 className="text-[2.25rem] font-semibold tracking-[-0.015em] text-bluewhale whitespace-nowrap">
-            Stories, playbooks, and intelligence from the consortium.
+            [Title of section goes here]
           </h2>
           <p className="text-base leading-relaxed text-bluewhale/70 whitespace-nowrap">
-            Discover the initiatives shaping global learning leadership, from spotlights on partner institutions to emerging tools accelerating equity-centered impact.
+            [Subtitle for section goes here]
           </p>
         </Reveal>
       </div>

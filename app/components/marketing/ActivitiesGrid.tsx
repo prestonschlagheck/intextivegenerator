@@ -18,11 +18,10 @@ export const ActivitiesGrid: React.FC = () => {
             Curated Activities
           </span>
           <h2 className="text-[2.25rem] font-semibold tracking-[-0.015em] text-bluewhale whitespace-nowrap">
-            High-touch experiences engineered for exponential learning impact.
+            [Title of section goes here]
           </h2>
           <p className="text-base leading-relaxed text-bluewhale/70 whitespace-nowrap">
-            From immersive residencies to rapid design sprints, each activity is
-            designed with executive rigor and tailored implementation support.
+            [Subtitle for section goes here]
           </p>
         </Reveal>
       </div>

@@ -17,12 +17,12 @@ export const FacultyGrid: React.FC = () => {
         </Reveal>
         <Reveal delay={0.06}>
           <h2 className="text-[2.25rem] font-semibold tracking-[-0.015em] text-bluewhale whitespace-nowrap">
-            A global cohort of strategists, researchers, and catalysts.
+            [Title of section goes here]
           </h2>
         </Reveal>
         <Reveal delay={0.12}>
           <p className="text-base leading-relaxed text-bluewhale/70 whitespace-nowrap">
-            Each expert brings deep experience translating vision into measurable outcomes across diverse learning environments.
+            [Subtitle for section goes here]
           </p>
         </Reveal>
       </div>

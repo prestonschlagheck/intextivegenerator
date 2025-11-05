@@ -8,28 +8,25 @@ import { CountUp } from "@/components/primitives/CountUp";
 
 const metrics = [
   {
-    id: "retention",
-    label: "Leadership retention",
-    value: "95%",
-    delta: "+6.2% YoY",
+    id: "stat-1",
+    label: "Statistic label",
+    value: "0",
     icon: "trendUp",
-    description: "Leaders who complete two or more programs remain engaged with new initiatives.",
+    description: "Statistic description",
   },
   {
-    id: "alignment",
-    label: "Strategy alignment",
-    value: "88%",
-    delta: "+12 pts",
+    id: "stat-2",
+    label: "Statistic label",
+    value: "0",
     icon: "chartBar",
-    description: "Institutions reporting full alignment across strategic pillars after program completion.",
+    description: "Statistic description",
   },
   {
-    id: "launch",
-    label: "Launch-to-impact",
-    value: "14 weeks",
-    delta: "-4 weeks",
+    id: "stat-3",
+    label: "Statistic label",
+    value: "0",
     icon: "map",
-    description: "Average time to deploy new initiatives with measurable learner outcomes.",
+    description: "Statistic description",
   },
 ];
 
@@ -44,10 +41,10 @@ export const KeyStats: React.FC = () => {
                 Key Statistics
               </span>
               <h2 className="text-[2.25rem] font-semibold tracking-[-0.015em] text-bluewhale lg:whitespace-nowrap">
-                A data-rich lens on leadership transformation.
+                [Title of section goes here]
               </h2>
               <p className="text-base leading-relaxed text-bluewhale/70">
-                Our analysts continuously monitor engagement, implementation velocity, and equity impact to ensure that every initiative advances the consortium&apos;s shared goals.
+                [Subtitle for section goes here]
               </p>
             </div>
 

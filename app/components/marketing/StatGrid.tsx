@@ -17,13 +17,12 @@ export const StatGrid: React.FC = () => {
         </Reveal>
         <Reveal delay={0.06}>
           <h2 className="text-[2.5rem] font-semibold tracking-[-0.015em] text-bluewhale lg:whitespace-nowrap">
-            Measurable gains trusted by global learning leaders.
+            [Title of section goes here]
           </h2>
         </Reveal>
         <Reveal delay={0.12}>
           <p className="text-lg leading-relaxed text-bluewhale/70">
-            Each metric is audited quarterly to ensure programs remain outcome-focused
-            and aligned with consortium standards.
+            [Subtitle for section goes here]
           </p>
         </Reveal>
       </div>
