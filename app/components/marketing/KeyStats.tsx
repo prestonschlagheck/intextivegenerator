@@ -33,7 +33,7 @@ const metrics = [
 export const KeyStats: React.FC = () => {
   return (
     <section className="container-max py-24">
-      <div className="grid gap-8 lg:grid-cols-[1.15fr_1fr]">
+      <div className="grid gap-8 xl:grid-cols-[2fr_1fr]">
         <Reveal className="h-full">
           <Card className="relative flex h-full flex-col justify-between overflow-hidden rounded-[28px] border border-bluewhale/10 bg-white p-8 shadow-xl">
             <div className="flex flex-col gap-4">
