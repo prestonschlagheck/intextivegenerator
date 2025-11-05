@@ -3,19 +3,19 @@
   "title": "[Main Hero Title Goes Here]",
   "subtitle": "Subtitle description goes here",
   "primaryAction": {
-    "label": "Primary Button Text",
-    "href": "#activities"
+    "label": "Explore Resources",
+    "href": "#resources"
   },
   "secondaryAction": {
-    "label": "Secondary Button Text",
-    "href": "#resources"
+    "label": "Explore Activities",
+    "href": "#activities"
   },
   "statHighlights": [
     {
       "id": "impact",
       "label": "Statistic 1 Label",
-      "value": "#",
-      "suffix": "/100",
+      "value": "0",
+      "suffix": "",
       "icon": "sparkle"
     },
     {

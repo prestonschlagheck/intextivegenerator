@@ -13,6 +13,17 @@ import { Icon } from "@/components/primitives/Icon";
 export const ResourceCenter: React.FC = () => {
   const [isExpanded, setIsExpanded] = React.useState(false);
 
+  React.useEffect(() => {
+    const handleOpenResourceCenter = () => {
+      setIsExpanded(true);
+    };
+
+    window.addEventListener("openResourceCenter", handleOpenResourceCenter);
+    return () => {
+      window.removeEventListener("openResourceCenter", handleOpenResourceCenter);
+    };
+  }, []);
+
   return (
     <section id="resources" className="container-max py-24">
       <div className="rounded-[28px] border border-bluewhale/12 bg-white/80 p-10 shadow-xl backdrop-blur-md">

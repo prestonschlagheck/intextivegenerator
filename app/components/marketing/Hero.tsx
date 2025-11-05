@@ -11,6 +11,31 @@ import { Icon } from "@/components/primitives/Icon";
 import { CountUp } from "@/components/primitives/CountUp";
 
 export const Hero: React.FC = () => {
+  const scrollToSection = (sectionId: string, offset = 80) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - offset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: "smooth"
+      });
+    }
+  };
+
+  const handleResourcesClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const event = new CustomEvent("openResourceCenter");
+    window.dispatchEvent(event);
+    setTimeout(() => {
+      scrollToSection("resources", 80);
+    }, 100);
+  };
+
+  const handleActivitiesClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    scrollToSection("activities", 80);
+  };
 
   return (
     <section
@@ -45,10 +70,10 @@ export const Hero: React.FC = () => {
             <Reveal delay={0.18}>
               <div className="flex flex-col gap-4 sm:flex-row">
                 <Button size="lg" asChild>
-                  <Link href={heroData.primaryAction.href}>{heroData.primaryAction.label}</Link>
+                  <Link href={heroData.primaryAction.href} onClick={handleResourcesClick}>{heroData.primaryAction.label}</Link>
                 </Button>
                 <Button variant="secondary" size="lg" asChild>
-                  <Link href={heroData.secondaryAction.href}>{heroData.secondaryAction.label}</Link>
+                  <Link href={heroData.secondaryAction.href} onClick={handleActivitiesClick}>{heroData.secondaryAction.label}</Link>
                 </Button>
               </div>
             </Reveal>
