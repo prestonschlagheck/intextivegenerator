@@ -2,7 +2,7 @@
   {
     "id": "stat-1",
     "icon": "chartLineUp",
-    "value": "#",
+    "value": "100",
     "label": "Statistic 1 label here",
     "description": "Description of statistic 1 goes here",
     "href": "#key-statistics"
@@ -10,7 +10,7 @@
   {
     "id": "stat-2",
     "icon": "usersThree",
-    "value": "#",
+    "value": "100",
     "label": "Statistic 2 label here",
     "description": "Description of statistic 2 goes here",
     "href": null
@@ -18,7 +18,7 @@
   {
     "id": "stat-3",
     "icon": "folders",
-    "value": "#",
+    "value": "100",
     "label": "Statistic 3 label here",
     "description": "Description of statistic 3 goes here",
     "href": "#resources"
@@ -26,7 +26,7 @@
   {
     "id": "stat-4",
     "icon": "handshake",
-    "value": "#",
+    "value": "100",
     "label": "Statistic 4 label here",
     "description": "Description of statistic 4 goes here",
     "href": null

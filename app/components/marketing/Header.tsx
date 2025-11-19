@@ -74,8 +74,8 @@ export const Header: React.FC = () => {
             "transition-all duration-300 ease-in-out",
             // Mobile: fit to top with bottom rounding only, add extra right padding for arrow spacing
             "mt-0 rounded-b-[28px] -mx-[clamp(var(--gutter-mobile),5vw,var(--gutter-desktop))] pl-[clamp(var(--gutter-mobile),5vw,var(--gutter-desktop))] pr-8",
-            // Desktop: original styling with margin, full rounding, and reset margins
-            "lg:mt-6 lg:rounded-[28px] lg:w-[1236px] lg:mx-auto lg:px-6 lg:flex-row lg:h-[88px] lg:items-center lg:justify-between lg:overflow-hidden",
+            // Desktop: match container-max width, with margin and proper padding
+            "lg:mt-6 lg:rounded-[28px] lg:mx-0 lg:px-6 lg:flex-row lg:h-[88px] lg:items-center lg:justify-between lg:overflow-hidden",
             isOverHero
               ? "glass-light glass-grain bg-white/20 backdrop-blur-xl border-white/20"
               : "glass-light glass-grain bg-bluewhale/15 backdrop-blur-xl border-bluewhale/30"

@@ -14,20 +14,20 @@
     {
       "id": "impact",
       "label": "Statistic 1 Label",
-      "value": "0",
+      "value": "100",
       "suffix": "",
       "icon": "sparkle"
     },
     {
       "id": "network",
       "label": "Statistic 2 Label",
-      "value": "#",
+      "value": "100",
       "icon": "globe"
     },
     {
       "id": "sessions",
       "label": "Statistic 3 Label",
-      "value": "#",
+      "value": "100",
       "icon": "calendarCheck"
     }
   ],

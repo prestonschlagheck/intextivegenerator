@@ -7,12 +7,19 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatDate(value: string, options?: Intl.DateTimeFormatOptions) {
   if (!value) return "";
+  
+  // If the value is a placeholder text (not a valid date), return it as-is
+  const date = new Date(value);
+  if (isNaN(date.getTime())) {
+    return value;
+  }
+  
   return new Intl.DateTimeFormat("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
     ...options
-  }).format(new Date(value));
+  }).format(date);
 }
 
 export function chunkArray<T>(list: T[], size: number) {
