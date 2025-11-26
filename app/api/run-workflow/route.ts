@@ -106,13 +106,16 @@ export async function POST(request: NextRequest) {
       const rawText = await response.text();
       console.log("Raw response length:", rawText.length);
       console.log("Raw response (first 1000 chars):", rawText.substring(0, 1000));
+      console.log("Raw response (last 500 chars):", rawText.substring(Math.max(0, rawText.length - 500)));
       
       // Check if response is empty
       if (!rawText || rawText.trim().length === 0) {
         console.error("Empty response received from n8n webhook");
+        console.error("Response status:", response.status);
+        console.error("Response headers:", Object.fromEntries(response.headers.entries()));
         return NextResponse.json(
           { 
-            error: "Empty response received from workflow. Check that your 'Respond to Webhook' node is configured correctly and connected to the workflow." 
+            error: "Empty response received from workflow. This usually means:\n1. The 'Respond to Webhook' node isn't receiving data from 'Clean Text'\n2. The expression {{ $json.cleaned_html }} is returning empty\n3. Check n8n Executions tab to see if the workflow completed successfully\n\nCheck the n8n execution logs to see what data is available at the 'Respond to Webhook' node." 
           },
           { status: 500 }
         );
