@@ -147,7 +147,7 @@ export default function IntextiveUploadPage() {
   };
 
   return (
-    <div className="flex h-screen flex-col bg-bluewhale overflow-hidden">
+    <div className="flex h-screen flex-col bg-bluewhale overflow-hidden relative">
       {/* Background Effects */}
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-bluewhale via-bluewhale/90 to-midnight opacity-90" />
@@ -156,7 +156,7 @@ export default function IntextiveUploadPage() {
       </div>
       
       {/* Header */}
-      <header className="flex-shrink-0 border-b border-white/10 bg-transparent">
+      <header className="flex-shrink-0 border-b border-white/10 bg-transparent relative z-10">
         <div className="flex items-center justify-between px-8 py-2">
           <Image
             src="/Images/Logos/GLCLogo.png"
@@ -172,7 +172,7 @@ export default function IntextiveUploadPage() {
       </header>
 
       {/* Main Content - Three Columns */}
-      <main className="flex flex-1 gap-6 overflow-hidden p-6">
+      <main className="flex flex-1 gap-6 overflow-hidden p-6 relative z-10" style={{ minHeight: 0 }}>
         {/* Box 1 - Upload & Instructions */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
