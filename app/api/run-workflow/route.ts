@@ -138,10 +138,22 @@ export async function POST(request: NextRequest) {
         console.log("Successfully parsed JSON. Keys:", Object.keys(data));
       } catch (parseError) {
         console.error("JSON parse error:", parseError);
-        console.error("Response that failed to parse:", rawText);
+        console.error("Response that failed to parse (first 500 chars):", rawText.substring(0, 500));
+        console.error("Response that failed to parse (last 200 chars):", rawText.substring(Math.max(0, rawText.length - 200)));
+        
+        // Check if it looks like JSON but has syntax errors
+        if (rawText.trim().startsWith("{") || rawText.trim().startsWith("[")) {
+          return NextResponse.json(
+            { 
+              error: `Invalid JSON syntax in workflow response. The response looks like JSON but has syntax errors. Check if the HTML content has unescaped quotes. Response preview: ${rawText.substring(0, 300)}` 
+            },
+            { status: 500 }
+          );
+        }
+        
         return NextResponse.json(
           { 
-            error: `Invalid JSON response from workflow. The response appears to be: ${rawText.substring(0, 300)}. Make sure your 'Respond to Webhook' node is set to return JSON format.` 
+            error: `Invalid JSON response from workflow. The response appears to be: ${rawText.substring(0, 300)}. Make sure your 'Respond to Webhook' node is set to return valid JSON format.` 
           },
           { status: 500 }
         );
