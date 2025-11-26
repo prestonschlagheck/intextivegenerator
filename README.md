@@ -1,6 +1,6 @@
-# GLC Learning Center Template
+# Intextive Generator
 
-Premium, production-ready marketing + admin experience crafted with Next.js 14, Tailwind CSS, and shadcn/ui primitives. Designed to feel intentional, editorial, and deployable out-of-the-box for the Global Learning Consortium brand.
+AI-powered PDF document processing application built with Next.js 14, Tailwind CSS, and shadcn/ui primitives. Upload PDFs with optional instructions and receive intelligent, formatted output through an n8n workflow integration.
 
 ## Tech Stack
 
@@ -19,7 +19,7 @@ npm install
 npm run dev
 ```
 
-Visit `http://localhost:3000` for the marketing site and `http://localhost:3000/admin` for the admin dashboard (login: `admin@example.com` / `changeme`).
+The app will be available at `http://localhost:3000` (automatically redirects to the upload page).
 
 ### Useful Scripts
 
@@ -30,35 +30,47 @@ Visit `http://localhost:3000` for the marketing site and `http://localhost:3000/
 - `npm run type-check` – verify TypeScript types
 - `npm run format` / `npm run format:write` – check or write Prettier formatting
 
-## Project Structure Highlights
+## Project Structure
 
-- `app/(marketing)` – marketing experience with hero, stats, activities, resources, faculty, news, and events sections
-- `app/admin` – gated dashboard with toolbar, post management, deleted queue, and modal editor
-- `components/primitives` – brand-aligned wrappers for buttons, cards, dropdowns, modals, icons, etc.
-- `components/ui` – shadcn-derived Radix bindings (button, card, dialog, dropdown)
-- `content/*.json` – structured data powering each content block
-- `styles/design-tokens.css` – source of truth for colors, typography, radii, shadows, motion
-- `lib/store` – Zustand stores for auth and posts (with Supabase TODO markers)
-- `public/placeholders` – branded imagery for hero, cards, avatars, and news items
+### Core Application
+- `app/page.tsx` – redirects to the main upload page
+- `app/intextive-upload/page.tsx` – main PDF upload interface with n8n workflow integration
+- `app/api/run-workflow/route.ts` – API route that proxies requests to n8n webhook (avoids CORS)
 
-## Design System
+### Design System
+- `components/primitives/` – animated wrappers for buttons, cards, and UI elements
+- `components/ui/` – shadcn-derived Radix UI components
+- `styles/design-tokens.css` – design tokens for colors, typography, spacing, and animations
 
-- Colors exposed via CSS variables (`--color-*`) and Tailwind theme extensions
-- Typography: DM Sans with custom scale (Display 56–72, H1 44, H2 36, H3 28, etc.)
-- Radii, shadows, and spacing mapped to Tailwind tokens
-- Shared animations defined in `lib/animations.ts` and Tailwind keyframes
+### Additional Pages (Legacy)
+- `app/admin/` – admin dashboard (can be removed if not needed)
+- `app/components/marketing/` – marketing components (can be removed if not needed)
 
-### Motion Guidelines
+## Features
 
-- Framer Motion powers fades, slide-ups, and hover micro-interactions
-- All timing aligns to the defined durations (150–420ms) and easing curves
+### PDF Processing
+- ✅ Upload PDF documents with validation
+- ✅ Optional processing instructions
+- ✅ Real-time loading states
+- ✅ Error handling with user-friendly messages
+- ✅ Results display with HTML preview
+- ✅ Copy to clipboard functionality
+- ✅ Download results as HTML file
 
-## Accessibility & SEO
+### Design & UX
+- Clean, modern interface with persian teal and bluewhale color scheme
+- Typography: DM Sans with custom scale
+- Smooth animations powered by Framer Motion
+- Fully responsive design (mobile, tablet, desktop)
+- Accessible with keyboard navigation and screen reader support
 
-- Semantic markup with accessible labels for icon-only buttons
-- Focus states use Persian Green glow per brand spec
-- `app/robots.ts` and `app/sitemap.ts` auto-generate crawl metadata
-- next-seo default configuration from `app/seo.config.ts`
+## How It Works
+
+1. **User uploads a PDF** with optional processing instructions
+2. **Form submits** to the local `/api/run-workflow` endpoint
+3. **API route proxies** the request to your n8n webhook (configured via `N8N_WEBHOOK_URL`)
+4. **n8n processes** the PDF and returns JSON with an `html` field
+5. **Results display** on the page with copy/download options
 
 ## Deployment
 
@@ -67,15 +79,41 @@ The project is optimized for Vercel:
 1. `npm run build`
 2. Deploy the `.next` output with Vercel or any Node-compatible platform
 
-Environment variables are not required yet. Supabase integration points are marked with TODO comments.
+### Environment Variables
 
-<!-- Acceptance Checklist -->
-- [x] Site matches brand palette, typography, and spacing tokens
-- [x] Buttons, cards, and shadows remain consistent across pages
-- [x] All required marketing sections render responsively (desktop, tablet, mobile)
-- [x] Resource dropdown activates inline on the marketing page
-- [x] News feed supports pinned posts sorted to the top
-- [x] Admin modal login validates hard-coded credentials
-- [x] Dashboard supports edit, publish, duplicate, pin, delete, reorder, restore flows
-- [x] SEO defaults, robots.txt, and sitemap configured
-- [x] Project boots locally and is deploy-ready for Vercel
+Create a `.env.local` file in the project root with the following variables:
+
+```bash
+# n8n Workflow Configuration
+# The webhook URL endpoint for your n8n workflow
+# Example: https://your-n8n-instance.com/webhook/your-workflow-id
+N8N_WEBHOOK_URL=https://your-n8n-instance.com/webhook/your-workflow-id
+```
+
+## API Integration
+
+Your n8n workflow webhook should:
+- Accept `POST` requests with `multipart/form-data`
+- Expect two fields:
+  - `file`: The uploaded PDF file
+  - `instructions`: Text string with processing instructions (can be empty)
+- Return JSON in this format:
+  ```json
+  {
+    "html": "<your generated HTML output>"
+  }
+  ```
+
+## Deployment
+
+### Vercel (Recommended)
+1. Push your code to GitHub/GitLab/Bitbucket
+2. Import the project in Vercel
+3. Add the `N8N_WEBHOOK_URL` environment variable
+4. Deploy!
+
+### Other Platforms
+Any Node.js hosting platform that supports Next.js will work:
+1. `npm run build` to create production build
+2. Set `N8N_WEBHOOK_URL` environment variable
+3. Deploy the `.next` output with `npm start`

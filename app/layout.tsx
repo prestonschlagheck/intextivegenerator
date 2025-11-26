@@ -16,34 +16,34 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL("https://glc-template.vercel.app"),
   title: {
-    default: "GLC Learning Center",
-    template: "%s | GLC Learning Center",
+    default: "Intextive Generator",
+    template: "%s | Intextive Generator",
   },
   description:
-    "A premium learning innovation hub delivering strategic programs, curated insights, and global partnerships for education leaders.",
+    "Transform your PDF documents with AI-powered processing. Upload a PDF and receive intelligent, formatted output tailored to your needs.",
   keywords: [
-    "learning",
-    "leadership",
-    "education",
-    "global consortium",
-    "professional development",
+    "pdf processing",
+    "document conversion",
+    "ai processing",
+    "document transformation",
+    "pdf generator",
   ],
-  authors: [{ name: "Global Learning Consortium" }],
+  authors: [{ name: "Intextive" }],
   alternates: {
     canonical: "https://glc-template.vercel.app",
   },
   openGraph: {
-    title: "GLC Learning Center",
+    title: "Intextive Generator",
     description:
-      "Premium programming, curated insights, and strategic partnerships tailored for tomorrow's learners.",
+      "Transform your PDF documents with AI-powered processing. Upload and receive intelligent output.",
     url: "https://glc-template.vercel.app",
-    siteName: "GLC Learning Center",
+    siteName: "Intextive Generator",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    site: "@globallearning",
+    site: "@intextive",
   },
 };
 
