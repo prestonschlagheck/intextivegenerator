@@ -91,11 +91,23 @@ export default function IntextiveUploadPage() {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to process workflow");
+        let errorMessage = "Failed to process workflow";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.error || errorData.message || errorMessage;
+        } catch {
+          // If response is not JSON, use status text
+          errorMessage = response.statusText || errorMessage;
+        }
+        throw new Error(errorMessage);
       }
 
-      const data: WorkflowResponse = await response.json();
+      let data: WorkflowResponse;
+      try {
+        data = await response.json();
+      } catch (error) {
+        throw new Error("Invalid response format from server");
+      }
 
       if (!data.html) {
         throw new Error("Invalid response: missing html content");

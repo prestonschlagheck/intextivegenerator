@@ -48,16 +48,43 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("n8n webhook error:", errorText);
+      let errorMessage = `Workflow failed: ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        if (errorData.error) {
+          errorMessage = errorData.error;
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+      } catch {
+        // If response is not JSON, try to get text
+        try {
+          const errorText = await response.text();
+          if (errorText) {
+            errorMessage = errorText.length > 200 ? `${errorText.substring(0, 200)}...` : errorText;
+          }
+        } catch {
+          // Use default error message
+        }
+      }
+      console.error("n8n webhook error:", errorMessage);
       return NextResponse.json(
-        { error: `Workflow failed: ${response.statusText}` },
+        { error: errorMessage },
         { status: response.status }
       );
     }
 
     // Parse and return the JSON response
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (error) {
+      console.error("Failed to parse JSON response:", error);
+      return NextResponse.json(
+        { error: "Invalid JSON response from workflow" },
+        { status: 500 }
+      );
+    }
 
     if (!data.html) {
       return NextResponse.json(
