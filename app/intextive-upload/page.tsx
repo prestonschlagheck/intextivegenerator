@@ -20,8 +20,6 @@ export default function IntextiveUploadPage() {
   const [resultHtml, setResultHtml] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState("");
   const [pdfPreviewUrl, setPdfPreviewUrl] = React.useState<string>("");
-  const [pdfPageCount, setPdfPageCount] = React.useState<number>(0);
-  const [currentPage, setCurrentPage] = React.useState<number>(1);
   
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -59,12 +57,7 @@ export default function IntextiveUploadPage() {
     const previewUrl = URL.createObjectURL(selectedFile);
     setPdfPreviewUrl(previewUrl);
 
-    // Set a default page count - actual counting would require a PDF library
-    // which has SSR compatibility issues with Next.js
-    setPdfPageCount(0);
-
     setFile(selectedFile);
-    setCurrentPage(1);
     setErrorMessage("");
     if (state === "error") {
       setState("idle");
@@ -119,22 +112,6 @@ export default function IntextiveUploadPage() {
     }
   };
 
-  const handleReset = () => {
-    setState("idle");
-    setFile(null);
-    setInstructions("");
-    setResultHtml("");
-    setErrorMessage("");
-    if (pdfPreviewUrl) {
-      URL.revokeObjectURL(pdfPreviewUrl);
-    }
-    setPdfPreviewUrl("");
-    setPdfPageCount(0);
-    setCurrentPage(1);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
 
   const handleCopyHtml = async () => {
     try {
