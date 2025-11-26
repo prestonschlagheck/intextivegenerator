@@ -42,10 +42,26 @@ export async function POST(request: NextRequest) {
     n8nFormData.append("file", file);
     n8nFormData.append("instructions", instructions || "");
 
-    const response = await fetch(webhookUrl, {
-      method: "POST",
-      body: n8nFormData,
-    });
+    console.log("Calling n8n webhook:", webhookUrl);
+    
+    let response;
+    try {
+      response = await fetch(webhookUrl, {
+        method: "POST",
+        body: n8nFormData,
+        headers: {
+          // Don't set Content-Type - let fetch set it automatically for FormData
+        },
+      });
+    } catch (fetchError) {
+      console.error("Network error calling n8n webhook:", fetchError);
+      return NextResponse.json(
+        { 
+          error: `Failed to connect to webhook: ${fetchError instanceof Error ? fetchError.message : "Network error"}. Please check the webhook URL is correct and accessible.` 
+        },
+        { status: 503 }
+      );
+    }
 
     if (!response.ok) {
       let errorMessage = `Workflow failed: ${response.statusText}`;
