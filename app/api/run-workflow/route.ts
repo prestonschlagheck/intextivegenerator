@@ -93,11 +93,36 @@ export async function POST(request: NextRequest) {
     // Parse and return the JSON response
     let data;
     try {
-      data = await response.json();
+      const contentType = response.headers.get("content-type");
+      console.log("Response content-type:", contentType);
+      
+      if (!contentType || !contentType.includes("application/json")) {
+        // Try to get the raw response to see what we're actually getting
+        const rawText = await response.text();
+        console.error("Non-JSON response received. First 500 chars:", rawText.substring(0, 500));
+        return NextResponse.json(
+          { 
+            error: `Invalid response format. Expected JSON but got ${contentType || "unknown"}. Response preview: ${rawText.substring(0, 200)}` 
+          },
+          { status: 500 }
+        );
+      }
+      
+      data = JSON.parse(await response.text());
+      console.log("Parsed response data keys:", Object.keys(data));
     } catch (error) {
       console.error("Failed to parse JSON response:", error);
+      // Try to get the raw response for debugging
+      try {
+        const rawText = await response.text();
+        console.error("Raw response (first 500 chars):", rawText.substring(0, 500));
+      } catch (e) {
+        console.error("Could not read response body:", e);
+      }
       return NextResponse.json(
-        { error: "Invalid JSON response from workflow" },
+        { 
+          error: `Invalid JSON response from workflow: ${error instanceof Error ? error.message : "Unknown error"}` 
+        },
         { status: 500 }
       );
     }
