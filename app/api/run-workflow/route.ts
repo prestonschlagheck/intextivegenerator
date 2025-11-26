@@ -94,34 +94,60 @@ export async function POST(request: NextRequest) {
     let data;
     try {
       const contentType = response.headers.get("content-type");
-      console.log("Response content-type:", contentType);
+      const contentLength = response.headers.get("content-length");
+      console.log("Response headers:", {
+        "content-type": contentType,
+        "content-length": contentLength,
+        "status": response.status,
+        "statusText": response.statusText
+      });
       
-      if (!contentType || !contentType.includes("application/json")) {
-        // Try to get the raw response to see what we're actually getting
-        const rawText = await response.text();
-        console.error("Non-JSON response received. First 500 chars:", rawText.substring(0, 500));
+      // Get the raw response text first
+      const rawText = await response.text();
+      console.log("Raw response length:", rawText.length);
+      console.log("Raw response (first 1000 chars):", rawText.substring(0, 1000));
+      
+      // Check if response is empty
+      if (!rawText || rawText.trim().length === 0) {
+        console.error("Empty response received from n8n webhook");
         return NextResponse.json(
           { 
-            error: `Invalid response format. Expected JSON but got ${contentType || "unknown"}. Response preview: ${rawText.substring(0, 200)}` 
+            error: "Empty response received from workflow. Check that your 'Respond to Webhook' node is configured correctly and connected to the workflow." 
           },
           { status: 500 }
         );
       }
       
-      data = JSON.parse(await response.text());
-      console.log("Parsed response data keys:", Object.keys(data));
-    } catch (error) {
-      console.error("Failed to parse JSON response:", error);
-      // Try to get the raw response for debugging
-      try {
-        const rawText = await response.text();
-        console.error("Raw response (first 500 chars):", rawText.substring(0, 500));
-      } catch (e) {
-        console.error("Could not read response body:", e);
+      // Check content type
+      if (contentType && !contentType.includes("application/json")) {
+        console.error("Non-JSON response received. Content-Type:", contentType);
+        return NextResponse.json(
+          { 
+            error: `Invalid response format. Expected JSON but got ${contentType}. Response preview: ${rawText.substring(0, 200)}` 
+          },
+          { status: 500 }
+        );
       }
+      
+      // Try to parse as JSON
+      try {
+        data = JSON.parse(rawText);
+        console.log("Successfully parsed JSON. Keys:", Object.keys(data));
+      } catch (parseError) {
+        console.error("JSON parse error:", parseError);
+        console.error("Response that failed to parse:", rawText);
+        return NextResponse.json(
+          { 
+            error: `Invalid JSON response from workflow. The response appears to be: ${rawText.substring(0, 300)}. Make sure your 'Respond to Webhook' node is set to return JSON format.` 
+          },
+          { status: 500 }
+        );
+      }
+    } catch (error) {
+      console.error("Failed to read response:", error);
       return NextResponse.json(
         { 
-          error: `Invalid JSON response from workflow: ${error instanceof Error ? error.message : "Unknown error"}` 
+          error: `Failed to read response from workflow: ${error instanceof Error ? error.message : "Unknown error"}` 
         },
         { status: 500 }
       );
