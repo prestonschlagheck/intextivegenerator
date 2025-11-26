@@ -92,14 +92,29 @@ export default function IntextiveUploadPage() {
 
       if (!response.ok) {
         let errorMessage = "Failed to process workflow";
+        let errorCode = "UNKNOWN_ERROR";
+        let errorDetails = "";
+        let troubleshooting: string[] = [];
+        
         try {
           const errorData = await response.json();
           errorMessage = errorData.error || errorData.message || errorMessage;
+          errorCode = errorData.errorCode || errorCode;
+          errorDetails = errorData.details || errorData.details || "";
+          troubleshooting = errorData.troubleshooting || [];
         } catch {
           // If response is not JSON, use status text
           errorMessage = response.statusText || errorMessage;
         }
-        throw new Error(errorMessage);
+        
+        // Format error message with code and details
+        const formattedError = troubleshooting.length > 0
+          ? `${errorMessage}\n\nError Code: ${errorCode}\n\n${errorDetails}\n\nTroubleshooting:\n${troubleshooting.map((item, i) => `${i + 1}. ${item}`).join("\n")}`
+          : errorDetails
+          ? `${errorMessage}\n\nError Code: ${errorCode}\n\n${errorDetails}`
+          : `${errorMessage}\n\nError Code: ${errorCode}`;
+        
+        throw new Error(formattedError);
       }
 
       let data: WorkflowResponse;
@@ -252,7 +267,36 @@ export default function IntextiveUploadPage() {
                       transition={{ duration: 0.2 }}
                       className="mt-4 overflow-hidden rounded-lg border border-red-300/30 bg-red-500/10 px-4 py-3"
                     >
-                      <p className="text-sm text-red-200">{errorMessage}</p>
+                      <div className="text-sm text-red-200 whitespace-pre-line">
+                        {errorMessage.split("\n").map((line, i) => {
+                          if (line.startsWith("Error Code:")) {
+                            return (
+                              <div key={i} className="mt-2 font-semibold text-red-100">
+                                {line}
+                              </div>
+                            );
+                          }
+                          if (line.startsWith("Troubleshooting:")) {
+                            return (
+                              <div key={i} className="mt-3 font-semibold text-red-100">
+                                {line}
+                              </div>
+                            );
+                          }
+                          if (/^\d+\./.test(line)) {
+                            return (
+                              <div key={i} className="ml-4 mt-1 text-red-200">
+                                {line}
+                              </div>
+                            );
+                          }
+                          return (
+                            <div key={i} className={i === 0 ? "font-semibold text-red-100" : "text-red-200"}>
+                              {line}
+                            </div>
+                          );
+                        })}
+                      </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
