@@ -277,73 +277,77 @@ export default function IntextiveUploadPage() {
                   <h2 className="text-xl font-semibold text-white">Upload PDF</h2>
                   <p className="text-sm text-white/70">Choose the file you want to process</p>
                 </div>
-                <div className="flex-1 overflow-auto p-6">
-                  <div className="space-y-6">
-                    {/* File Input */}
-                    <div>
-                      <label className="mb-2 block text-sm font-medium text-white">
-                        PDF File <span className="text-persian">*</span>
-                      </label>
-                      <input
-                        ref={fileInputRef}
-                        id="file-upload"
-                        type="file"
-                        accept="application/pdf"
-                        onChange={handleFileChange}
-                        disabled={state === "loading"}
-                        className="hidden"
-                      />
-                      <Button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        disabled={state === "loading"}
-                        className="w-full bg-persian text-white hover:bg-persian/90 disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        Choose File
-                      </Button>
-                      {file && (
-                        <p className="mt-2 text-sm text-white/70 truncate">
-                          Selected: {file.name}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* PDF Preview */}
-                    {pdfPreviewUrl && (
-                      <div className="overflow-hidden rounded-lg border border-white/20 bg-white/5">
-                        <div className="flex items-center justify-between border-b border-white/20 bg-white/5 px-4 py-2">
-                          <span className="text-xs text-white">PDF Preview</span>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              const link = document.createElement('a');
-                              link.href = pdfPreviewUrl;
-                              link.download = file?.name || 'document.pdf';
-                              link.click();
-                            }}
-                            className="rounded p-1.5 text-white transition-colors hover:bg-persian/20 hover:text-persian"
-                            title="Download PDF"
-                          >
-                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                            </svg>
-                          </button>
-                        </div>
-                        <iframe
-                          src={`${pdfPreviewUrl}#toolbar=0&navpanes=0&scrollbar=1`}
-                          className="h-96 w-full"
-                          title="PDF Preview"
-                        />
-                      </div>
-                    )}
-
-                    {/* Error Message */}
-                    {state === "error" && errorMessage && (
-                      <div className="rounded-lg border border-red-300/30 bg-red-500/10 px-4 py-3">
-                        <div className="text-sm text-red-200">{errorMessage}</div>
-                      </div>
+                <div className="flex-1 overflow-hidden p-6 flex flex-col">
+                  {/* File Input */}
+                  <div className="flex-shrink-0 mb-4">
+                    <label className="mb-2 block text-sm font-medium text-white">
+                      PDF File <span className="text-persian">*</span>
+                    </label>
+                    <input
+                      ref={fileInputRef}
+                      id="file-upload"
+                      type="file"
+                      accept="application/pdf"
+                      onChange={handleFileChange}
+                      disabled={state === "loading"}
+                      className="hidden"
+                    />
+                    <Button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={state === "loading"}
+                      className="w-full bg-persian text-white hover:bg-persian/90 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      Choose File
+                    </Button>
+                    {file && (
+                      <p className="mt-2 text-sm text-white/70 truncate">
+                        Selected: {file.name}
+                      </p>
                     )}
                   </div>
+
+                  {/* PDF Preview */}
+                  {pdfPreviewUrl && (
+                    <div className="flex-1 overflow-hidden rounded-lg border border-white/20 bg-white/5 mb-4 flex flex-col">
+                      <div className="flex-shrink-0 flex items-center justify-between border-b border-white/20 bg-white/5 px-4 py-2">
+                        <span className="text-xs text-white">PDF Preview</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const link = document.createElement('a');
+                            link.href = pdfPreviewUrl;
+                            link.download = file?.name || 'document.pdf';
+                            link.click();
+                          }}
+                          className="rounded p-1.5 text-white transition-colors hover:bg-persian/20 hover:text-persian"
+                          title="Download PDF"
+                        >
+                          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
+                        </button>
+                      </div>
+                      <div className="flex-1 relative" style={{ touchAction: 'pan-y' }}>
+                        <iframe
+                          src={`${pdfPreviewUrl}#toolbar=0&navpanes=0&scrollbar=1&zoom=page-fit`}
+                          className="absolute inset-0 w-full h-full"
+                          title="PDF Preview"
+                          style={{ 
+                            pointerEvents: 'auto',
+                            touchAction: 'pan-y'
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Error Message */}
+                  {state === "error" && errorMessage && (
+                    <div className="flex-shrink-0 rounded-lg border border-red-300/30 bg-red-500/10 px-4 py-3">
+                      <div className="text-sm text-red-200">{errorMessage}</div>
+                    </div>
+                  )}
                 </div>
                 <div className="flex-shrink-0 border-t border-white/20 px-6 py-4">
                   <Button
