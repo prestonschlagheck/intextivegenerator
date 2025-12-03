@@ -714,64 +714,41 @@ export default function IntextiveUploadPage() {
                   <h2 className="text-xl font-semibold text-white">Processing Your Request</h2>
                   <p className="text-sm text-white/70">Your PDF is being processed</p>
                 </div>
-                <div className="flex-1 overflow-auto p-6 flex items-center justify-center">
-                  <div className="max-w-md text-center space-y-6">
-                    {/* Animated Spinner */}
-                    <div className="flex justify-center">
-                      <svg
-                        className="h-16 w-16 animate-spin text-persian"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        />
-                      </svg>
+                <div className="flex-1 overflow-auto p-8 flex items-center justify-center">
+                  <div className="w-full max-w-2xl">
+                    {/* Countdown Timer - Large at Top */}
+                    <div className="text-center mb-8">
+                      <div className="text-7xl font-bold text-white mb-2">
+                        {formatTime(countdown)}
+                      </div>
+                      <p className="text-sm text-white/70">Estimated time remaining</p>
                     </div>
 
-                    {/* Progress Bar */}
-                    <div className="space-y-3">
-                      <div className="rounded-lg border border-white/20 bg-white/5 p-6">
-                        <p className="text-sm text-white/70 mb-4">Estimated time remaining</p>
-                        <div className="relative">
-                          <div className="h-4 w-full overflow-hidden rounded-full bg-white/10">
-                            <motion.div
-                              className="h-full bg-gradient-to-r from-persian to-lagoon"
-                              initial={{ width: "100%" }}
-                              animate={{ width: `${(countdown / 300) * 100}%` }}
-                              transition={{ duration: 0.5, ease: "linear" }}
-                            />
-                          </div>
-                          <div className="mt-2 text-center text-lg font-semibold text-white">
-                            {formatTime(countdown)}
-                          </div>
-                        </div>
+                    {/* Progress Bar - Full Width */}
+                    <div className="mb-12">
+                      <div className="h-6 w-full overflow-hidden rounded-full bg-white/10 border border-white/20">
+                        <motion.div
+                          className="h-full bg-gradient-to-r from-persian to-lagoon"
+                          initial={{ width: "100%" }}
+                          animate={{ width: `${(countdown / 300) * 100}%` }}
+                          transition={{ duration: 0.5, ease: "linear" }}
+                        />
                       </div>
                     </div>
 
-                    {/* Message */}
+                    {/* Email Recipients at Bottom */}
                     <div className="space-y-3">
-                      <p className="text-white">
+                      <p className="text-center text-white font-medium">
                         Your output will be emailed to:
                       </p>
                       <div className="rounded-lg border border-white/20 bg-white/5 p-4">
-                        <ul className="space-y-1 text-sm text-white">
+                        <ul className="space-y-1 text-sm text-white text-center">
                           {emailList.map((email, index) => (
-                            <li key={index}>• {email}</li>
+                            <li key={index}>{email}</li>
                           ))}
                         </ul>
                       </div>
-                      <p className="text-sm text-white/70">
+                      <p className="text-center text-sm text-white/70 mt-4">
                         You can safely close this page. We&apos;ll send you an email when processing is complete.
                       </p>
                     </div>
