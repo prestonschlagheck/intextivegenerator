@@ -48,6 +48,44 @@ export default function IntextiveUploadPage() {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email.trim());
+  };
+
+  const addEmail = (emailToAdd: string) => {
+    const trimmedEmail = emailToAdd.trim();
+    if (!trimmedEmail) return;
+    
+    if (!validateEmail(trimmedEmail)) {
+      setErrorMessage("Please enter a valid email address");
+      setState("error");
+      return;
+    }
+
+    if (emailList.includes(trimmedEmail)) {
+      setErrorMessage("This email has already been added");
+      setState("error");
+      return;
+    }
+
+    setEmailList([...emailList, trimmedEmail]);
+    setEmails("");
+    setErrorMessage("");
+    setState("idle");
+  };
+
+  const removeEmail = (emailToRemove: string) => {
+    setEmailList(emailList.filter(email => email !== emailToRemove));
+  };
+
+  const handleEmailKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === ";") {
+      e.preventDefault();
+      addEmail(emails);
+    }
+  };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     
@@ -91,18 +129,18 @@ export default function IntextiveUploadPage() {
   };
 
   const handleNextFromEmail = () => {
-    const parsedEmails = emails
-      .split(/[,;\n]/)
-      .map((email) => email.trim())
-      .filter((email) => email.length > 0);
+    // If there's text in the input, try to add it first
+    if (emails.trim()) {
+      addEmail(emails);
+      return; // Don't proceed yet, let user confirm
+    }
 
-    if (parsedEmails.length === 0) {
-      setErrorMessage("Please enter at least one email address");
+    if (emailList.length === 0) {
+      setErrorMessage("Please add at least one email address");
       setState("error");
       return;
     }
 
-    setEmailList(parsedEmails);
     setErrorMessage("");
     setCurrentStep("instructions");
   };
@@ -381,23 +419,50 @@ export default function IntextiveUploadPage() {
                       <label htmlFor="emails" className="mb-2 block text-sm font-medium text-white">
                         Email Addresses <span className="text-persian">*</span>
                       </label>
-                      <textarea
+                      <input
                         id="emails"
+                        type="email"
                         value={emails}
                         onChange={(e) => setEmails(e.target.value)}
-                        placeholder="Enter one or more emails separated by commas, semicolons, or new lines"
+                        onKeyDown={handleEmailKeyDown}
+                        placeholder="Type an email and press Enter or semicolon"
                         className={cn(
                           "block w-full rounded-lg border border-white/30 bg-white px-4 py-3 text-sm text-bluewhale placeholder:text-bluewhale/50",
                           "focus:border-persian focus:outline-none focus:ring-2 focus:ring-persian/30",
-                          "transition-colors duration-200",
-                          "resize-none"
+                          "transition-colors duration-200"
                         )}
-                        rows={6}
                       />
                       <p className="mt-2 text-xs text-white/70">
-                        The generated HTML will be emailed to each address above.
+                        Press Enter or semicolon after each email address. The generated HTML will be emailed to each address.
                       </p>
                     </div>
+
+                    {/* Email Tags */}
+                    {emailList.length > 0 && (
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium text-white">Added Recipients ({emailList.length})</p>
+                        <div className="flex flex-wrap gap-2">
+                          {emailList.map((email) => (
+                            <div
+                              key={email}
+                              className="flex items-center gap-2 rounded-lg border border-white/30 bg-white/10 px-3 py-2 text-sm text-white backdrop-blur-sm"
+                            >
+                              <span>{email}</span>
+                              <button
+                                type="button"
+                                onClick={() => removeEmail(email)}
+                                className="rounded-full p-0.5 text-white/70 transition-colors hover:bg-red-500/20 hover:text-red-300"
+                                title="Remove email"
+                              >
+                                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
 
                     {/* Error Message */}
                     {state === "error" && errorMessage && (
@@ -490,31 +555,37 @@ export default function IntextiveUploadPage() {
                   <h2 className="text-xl font-semibold text-white">Review & Submit</h2>
                   <p className="text-sm text-white/70">Review your submission before processing</p>
                 </div>
-                <div className="flex-1 overflow-auto p-6">
-                  <div className="space-y-6">
-                    {/* File Info */}
-                    <div className="rounded-lg border border-white/20 bg-white/5 p-4">
-                      <div className="mb-2 flex items-center justify-between">
+                <div className="flex-1 overflow-hidden p-6 flex flex-col">
+                  {/* PDF File Preview - Takes most space */}
+                  <div className="flex-1 overflow-hidden rounded-lg border border-white/20 bg-white/5 p-4 mb-4 flex flex-col">
+                    <div className="flex-shrink-0 mb-2 flex items-center justify-between">
+                      <div>
                         <h3 className="text-sm font-semibold text-white">PDF File</h3>
-                        <Button
-                          onClick={handleReplaceFile}
-                          className="text-xs bg-white/10 text-white hover:bg-white/20 px-3 py-1"
-                        >
-                          Replace
-                        </Button>
+                        <p className="text-xs text-white/70 mt-1">{file?.name}</p>
                       </div>
-                      <p className="text-sm text-white">{file?.name}</p>
-                      {pdfPreviewUrl && (
-                        <div className="mt-3 overflow-hidden rounded border border-white/20">
+                      <Button
+                        onClick={handleReplaceFile}
+                        className="text-xs bg-white/10 text-white hover:bg-white/20 px-3 py-1"
+                      >
+                        Replace
+                      </Button>
+                    </div>
+                    {pdfPreviewUrl && (
+                      <div className="flex-1 overflow-hidden rounded border border-white/20 relative">
+                        <div className="absolute inset-0">
                           <iframe
-                            src={`${pdfPreviewUrl}#toolbar=0&navpanes=0&scrollbar=1`}
-                            className="h-48 w-full"
+                            src={`${pdfPreviewUrl}#toolbar=0&navpanes=0&scrollbar=1&zoom=page-fit`}
+                            className="w-full h-full"
                             title="PDF Preview"
+                            style={{ touchAction: 'pan-y' }}
                           />
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
+                  </div>
 
+                  {/* Bottom Section - Email Recipients and Processing Instructions */}
+                  <div className="flex-shrink-0 grid grid-cols-2 gap-4">
                     {/* Email Recipients */}
                     <div className="rounded-lg border border-white/20 bg-white/5 p-4">
                       <div className="mb-2 flex items-center justify-between">
@@ -548,43 +619,43 @@ export default function IntextiveUploadPage() {
                         {instructions || <em className="text-white/70">No specific instructions provided</em>}
                       </p>
                     </div>
+                  </div>
 
-                    {/* Error Message */}
-                    {state === "error" && errorMessage && (
-                      <div className="rounded-lg border border-red-300/30 bg-red-500/10 px-4 py-3">
-                        <div className="text-sm text-red-200 whitespace-pre-line">
-                          {errorMessage.split("\n").map((line, i) => {
-                            if (line.startsWith("Error Code:")) {
-                              return (
-                                <div key={i} className="mt-2 font-semibold text-red-100">
-                                  {line}
-                                </div>
-                              );
-                            }
-                            if (line.startsWith("Troubleshooting:")) {
-                              return (
-                                <div key={i} className="mt-3 font-semibold text-red-100">
-                                  {line}
-                                </div>
-                              );
-                            }
-                            if (/^\d+\./.test(line)) {
-                              return (
-                                <div key={i} className="ml-4 mt-1 text-red-200">
-                                  {line}
-                                </div>
-                              );
-                            }
+                  {/* Error Message */}
+                  {state === "error" && errorMessage && (
+                    <div className="flex-shrink-0 mt-4 rounded-lg border border-red-300/30 bg-red-500/10 px-4 py-3">
+                      <div className="text-sm text-red-200 whitespace-pre-line">
+                        {errorMessage.split("\n").map((line, i) => {
+                          if (line.startsWith("Error Code:")) {
                             return (
-                              <div key={i} className={i === 0 ? "font-semibold text-red-100" : "text-red-200"}>
+                              <div key={i} className="mt-2 font-semibold text-red-100">
                                 {line}
                               </div>
                             );
-                          })}
-                        </div>
+                          }
+                          if (line.startsWith("Troubleshooting:")) {
+                            return (
+                              <div key={i} className="mt-3 font-semibold text-red-100">
+                                {line}
+                              </div>
+                            );
+                          }
+                          if (/^\d+\./.test(line)) {
+                            return (
+                              <div key={i} className="ml-4 mt-1 text-red-200">
+                                {line}
+                              </div>
+                            );
+                          }
+                          return (
+                            <div key={i} className={i === 0 ? "font-semibold text-red-100" : "text-red-200"}>
+                              {line}
+                            </div>
+                          );
+                        })}
                       </div>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
                 <div className="flex-shrink-0 border-t border-white/20 px-6 py-4 flex gap-3">
                   <Button
