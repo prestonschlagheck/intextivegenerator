@@ -673,12 +673,24 @@ export default function IntextiveUploadPage() {
                       </svg>
                     </div>
 
-                    {/* Countdown */}
-                    <div className="rounded-lg border border-white/20 bg-white/5 p-6">
-                      <div className="text-4xl font-bold text-white mb-2">
-                        {formatTime(countdown)}
+                    {/* Progress Bar */}
+                    <div className="space-y-3">
+                      <div className="rounded-lg border border-white/20 bg-white/5 p-6">
+                        <p className="text-sm text-white/70 mb-4">Estimated time remaining</p>
+                        <div className="relative">
+                          <div className="h-4 w-full overflow-hidden rounded-full bg-white/10">
+                            <motion.div
+                              className="h-full bg-gradient-to-r from-persian to-lagoon"
+                              initial={{ width: "100%" }}
+                              animate={{ width: `${(countdown / 300) * 100}%` }}
+                              transition={{ duration: 0.5, ease: "linear" }}
+                            />
+                          </div>
+                          <div className="mt-2 text-center text-lg font-semibold text-white">
+                            {formatTime(countdown)}
+                          </div>
+                        </div>
                       </div>
-                      <p className="text-sm text-white/70">Estimated time remaining</p>
                     </div>
 
                     {/* Message */}
@@ -687,7 +699,7 @@ export default function IntextiveUploadPage() {
                         Your output will be emailed to:
                       </p>
                       <div className="rounded-lg border border-white/20 bg-white/5 p-4">
-                        <ul className="space-y-1 text-sm text-white/70">
+                        <ul className="space-y-1 text-sm text-white">
                           {emailList.map((email, index) => (
                             <li key={index}>• {email}</li>
                           ))}
@@ -712,9 +724,10 @@ export default function IntextiveUploadPage() {
                       setErrorMessage("");
                       setCountdown(300);
                     }}
-                    className="w-full bg-white/10 text-white hover:bg-white/20 border border-white/30"
+                    disabled={countdown > 0}
+                    className="w-full bg-white/10 text-white hover:bg-white/20 border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Process Another File
+                    {countdown > 0 ? "Processing..." : "Process Another File"}
                   </Button>
                 </div>
               </motion.div>
