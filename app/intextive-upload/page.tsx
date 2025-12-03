@@ -10,10 +10,6 @@ import { cn } from "@/lib/utils";
 type UploadState = "idle" | "loading" | "success" | "error";
 type Step = "upload" | "email" | "instructions" | "review" | "processing";
 
-interface WorkflowResponse {
-  message?: string;
-}
-
 export default function IntextiveUploadPage() {
   const [currentStep, setCurrentStep] = React.useState<Step>("upload");
   const [state, setState] = React.useState<UploadState>("idle");
@@ -176,11 +172,6 @@ export default function IntextiveUploadPage() {
       );
       setState("error");
     }
-  };
-
-  const handleEdit = () => {
-    setState("idle");
-    setCurrentStep("review");
   };
 
   const handleReplaceFile = () => {
