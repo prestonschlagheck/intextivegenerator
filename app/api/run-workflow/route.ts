@@ -24,6 +24,20 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
     const instructions = formData.get("instructions") as string | null;
+    const emails = formData.get("emails") as string | null;
+
+    // Clean and validate email addresses
+    let emailList: string[] = [];
+    if (emails) {
+      try {
+        const parsedEmails = JSON.parse(emails);
+        emailList = Array.isArray(parsedEmails) 
+          ? parsedEmails.map(email => String(email).trim().replace(/^=+/, ''))
+          : [];
+      } catch {
+        emailList = [];
+      }
+    }
 
     // Validate the file
     if (!file) {
@@ -49,10 +63,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Forward the request to n8n
+    // Forward the request to n8n with cleaned emails
     const n8nFormData = new FormData();
     n8nFormData.append("file", file);
     n8nFormData.append("instructions", instructions || "");
+    n8nFormData.append("emails", JSON.stringify(emailList));
 
     console.log("Calling n8n webhook:", webhookUrl);
     
@@ -80,6 +95,16 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       let errorMessage = `Workflow failed: ${response.statusText}`;
+      let errorCode = "N8N_WORKFLOW_ERROR";
+      let details = `n8n workflow returned status ${response.status}. Check n8n Executions tab for workflow errors.`;
+      
+      // Special handling for 404 (test webhook already used or workflow inactive)
+      if (response.status === 404) {
+        errorMessage = "Workflow is not available";
+        errorCode = "WEBHOOK_NOT_AVAILABLE";
+        details = "The n8n workflow is either inactive or the test webhook has already been used. If using test mode, click 'Test workflow' in n8n again. For production, activate the workflow and use the production webhook URL.";
+      }
+      
       try {
         const errorData = await response.json();
         if (errorData.error) {
@@ -102,34 +127,32 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { 
           error: errorMessage,
-          errorCode: "N8N_WORKFLOW_ERROR",
-          details: `n8n workflow returned status ${response.status}. Check n8n Executions tab for workflow errors.`,
+          errorCode,
+          details,
           statusCode: response.status
         },
         { status: response.status }
       );
     }
 
-    // Parse and return the JSON response
+    // Parse and return the workflow response (JSON or HTML file)
     let data;
     try {
-      const contentType = response.headers.get("content-type");
+      const contentType = response.headers.get("content-type") || "";
       const contentLength = response.headers.get("content-length");
+      const disposition = response.headers.get("content-disposition");
+      const buffer = await response.arrayBuffer();
+      const byteLength = buffer.byteLength;
       console.log("Response headers:", {
         "content-type": contentType,
         "content-length": contentLength,
-        "status": response.status,
-        "statusText": response.statusText
+        "content-disposition": disposition,
+        bytes: byteLength,
+        status: response.status,
+        statusText: response.statusText
       });
-      
-      // Get the raw response text first
-      const rawText = await response.text();
-      console.log("Raw response length:", rawText.length);
-      console.log("Raw response (first 1000 chars):", rawText.substring(0, 1000));
-      console.log("Raw response (last 500 chars):", rawText.substring(Math.max(0, rawText.length - 500)));
-      
-      // Check if response is empty
-      if (!rawText || rawText.trim().length === 0) {
+
+      if (byteLength === 0) {
         console.error("Empty response received from n8n webhook");
         console.error("Response status:", response.status);
         console.error("Response headers:", Object.fromEntries(response.headers.entries()));
@@ -149,67 +172,70 @@ export async function POST(request: NextRequest) {
           { status: 500 }
         );
       }
-      
-      // Check content type
-      if (contentType && !contentType.includes("application/json")) {
-        console.error("Non-JSON response received. Content-Type:", contentType);
-        return NextResponse.json(
-          { 
-            error: `Invalid response format. Expected JSON but got ${contentType}`,
-            errorCode: "INVALID_CONTENT_TYPE",
-            details: `n8n returned Content-Type: ${contentType}, but we need application/json`,
-            responsePreview: rawText.substring(0, 200),
-            troubleshooting: [
-              "1. In 'Respond to Webhook' node, add header: Content-Type: application/json",
-              "2. Set 'Respond With' to either 'JSON' or 'Text' (with JSON string in body)",
-              "3. Verify the response body is valid JSON format"
-            ]
-          },
-          { status: 500 }
-        );
-      }
-      
-      // Try to parse as JSON
-      try {
-        data = JSON.parse(rawText);
-        console.log("Successfully parsed JSON. Keys:", Object.keys(data));
-      } catch (parseError) {
-        console.error("JSON parse error:", parseError);
-        console.error("Response that failed to parse (first 500 chars):", rawText.substring(0, 500));
-        console.error("Response that failed to parse (last 200 chars):", rawText.substring(Math.max(0, rawText.length - 200)));
-        
-        // Check if it looks like JSON but has syntax errors
-        if (rawText.trim().startsWith("{") || rawText.trim().startsWith("[")) {
+
+      const decoder = new TextDecoder("utf-8");
+      const rawText = decoder.decode(buffer);
+
+      if (contentType.includes("application/json")) {
+        try {
+          data = JSON.parse(rawText);
+          console.log("Successfully parsed JSON. Keys:", Object.keys(data));
+        } catch (parseError) {
+          console.error("JSON parse error:", parseError);
+          console.error("Response that failed to parse (first 500 chars):", rawText.substring(0, 500));
+          console.error("Response that failed to parse (last 200 chars):", rawText.substring(Math.max(0, rawText.length - 200)));
+
+          if (rawText.trim().startsWith("{") || rawText.trim().startsWith("[")) {
+            return NextResponse.json(
+              { 
+                error: "Invalid JSON syntax in workflow response",
+                errorCode: "JSON_SYNTAX_ERROR",
+                details: "The response looks like JSON but has syntax errors. This usually means unescaped quotes in the HTML content.",
+                responsePreview: rawText.substring(0, 300),
+                responseLength: rawText.length,
+                troubleshooting: [
+                  "1. In n8n 'Respond to Webhook' node, use JSON.stringify() to properly escape the HTML:",
+                  "   Response Body: {\"html\":{{ JSON.stringify($json.cleaned_html) }}}",
+                  "2. Or ensure n8n automatically escapes quotes when using {{ $json.cleaned_html }}",
+                  "3. Check the response preview above to see where the JSON syntax breaks"
+                ]
+              },
+              { status: 500 }
+            );
+          }
+
           return NextResponse.json(
             { 
-              error: "Invalid JSON syntax in workflow response",
-              errorCode: "JSON_SYNTAX_ERROR",
-              details: "The response looks like JSON but has syntax errors. This usually means unescaped quotes in the HTML content.",
+              error: "Invalid JSON response from workflow",
+              errorCode: "INVALID_JSON_FORMAT",
+              details: "The response is not valid JSON format.",
               responsePreview: rawText.substring(0, 300),
               responseLength: rawText.length,
               troubleshooting: [
-                "1. In n8n 'Respond to Webhook' node, use JSON.stringify() to properly escape the HTML:",
-                "   Response Body: {\"html\":{{ JSON.stringify($json.cleaned_html) }}}",
-                "2. Or ensure n8n automatically escapes quotes when using {{ $json.cleaned_html }}",
-                "3. Check the response preview above to see where the JSON syntax breaks"
+                "1. Set 'Respond to Webhook' node to 'JSON' mode, OR",
+                "2. Use 'Text' mode with valid JSON string: {\"html\":\"{{ $json.cleaned_html }}\"}",
+                "3. Ensure Content-Type header is set to application/json"
               ]
             },
             { status: 500 }
           );
         }
-        
+      } else if (
+        contentType.includes("text/html") ||
+        contentType.includes("application/xhtml+xml") ||
+        (!contentType && disposition?.includes(".html"))
+      ) {
+        // n8n responded with an HTML file. Send the contents back as { html: string }.
+        data = { html: rawText };
+        console.log("Received HTML file response. Length:", rawText.length);
+      } else {
+        console.error("Unexpected content type:", contentType);
         return NextResponse.json(
           { 
-            error: "Invalid JSON response from workflow",
-            errorCode: "INVALID_JSON_FORMAT",
-            details: "The response is not valid JSON format.",
-            responsePreview: rawText.substring(0, 300),
-            responseLength: rawText.length,
-            troubleshooting: [
-              "1. Set 'Respond to Webhook' node to 'JSON' mode, OR",
-              "2. Use 'Text' mode with valid JSON string: {\"html\":\"{{ $json.cleaned_html }}\"}",
-              "3. Ensure Content-Type header is set to application/json"
-            ]
+            error: `Invalid response format. Expected JSON or text/html but got ${contentType || "unknown"}`,
+            errorCode: "INVALID_CONTENT_TYPE",
+            details: "Update the n8n 'Respond to Webhook' node to return JSON (with {\"html\": \"...\"}) or a text/html file.",
+            responsePreview: rawText.substring(0, 200)
           },
           { status: 500 }
         );
@@ -226,22 +252,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!data.html) {
-      const availableKeys = Object.keys(data);
-      return NextResponse.json(
-        { 
-          error: "Invalid response from workflow: missing html field",
-          errorCode: "MISSING_HTML_FIELD",
-          details: `The response is valid JSON but doesn't contain an 'html' field.`,
-          availableFields: availableKeys,
-          troubleshooting: [
-            `1. The JSON response has these fields: ${availableKeys.join(", ")}`,
-            "2. Update 'Respond to Webhook' node to return: {\"html\": \"...\"}",
-            `3. Or update frontend to read from: ${availableKeys[0] || "unknown field"}`
-          ]
-        },
-        { status: 500 }
-      );
+    if (!data) {
+      return NextResponse.json({ message: "Workflow accepted" });
     }
 
     return NextResponse.json(data);

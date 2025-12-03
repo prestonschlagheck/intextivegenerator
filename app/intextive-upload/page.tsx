@@ -8,18 +8,22 @@ import { Button } from "@/components/primitives/Button";
 import { cn } from "@/lib/utils";
 
 type UploadState = "idle" | "loading" | "success" | "error";
+type Step = "upload" | "email" | "instructions" | "review" | "processing";
 
 interface WorkflowResponse {
-  html: string;
+  message?: string;
 }
 
 export default function IntextiveUploadPage() {
+  const [currentStep, setCurrentStep] = React.useState<Step>("upload");
   const [state, setState] = React.useState<UploadState>("idle");
   const [file, setFile] = React.useState<File | null>(null);
   const [instructions, setInstructions] = React.useState("");
-  const [resultHtml, setResultHtml] = React.useState("");
+  const [emails, setEmails] = React.useState("");
+  const [emailList, setEmailList] = React.useState<string[]>([]);
   const [errorMessage, setErrorMessage] = React.useState("");
   const [pdfPreviewUrl, setPdfPreviewUrl] = React.useState<string>("");
+  const [countdown, setCountdown] = React.useState(300); // 5 minutes in seconds
   
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
@@ -31,6 +35,22 @@ export default function IntextiveUploadPage() {
       }
     };
   }, [pdfPreviewUrl]);
+
+  // Countdown timer for processing step
+  React.useEffect(() => {
+    if (currentStep === "processing" && countdown > 0) {
+      const timer = setInterval(() => {
+        setCountdown((prev) => Math.max(0, prev - 1));
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [currentStep, countdown]);
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -64,25 +84,54 @@ export default function IntextiveUploadPage() {
     }
   };
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    
-    // Validate file is selected
+  const handleNextFromUpload = () => {
     if (!file) {
       setErrorMessage("Please select a PDF file");
+      setState("error");
+      return;
+    }
+    setErrorMessage("");
+    setCurrentStep("email");
+  };
+
+  const handleNextFromEmail = () => {
+    const parsedEmails = emails
+      .split(/[,;\n]/)
+      .map((email) => email.trim())
+      .filter((email) => email.length > 0);
+
+    if (parsedEmails.length === 0) {
+      setErrorMessage("Please enter at least one email address");
+      setState("error");
+      return;
+    }
+
+    setEmailList(parsedEmails);
+    setErrorMessage("");
+    setCurrentStep("instructions");
+  };
+
+  const handleNextFromInstructions = () => {
+    setErrorMessage("");
+    setCurrentStep("review");
+  };
+
+  const handleSubmit = async () => {
+    if (!file || emailList.length === 0) {
+      setErrorMessage("Missing required information");
       setState("error");
       return;
     }
 
     setState("loading");
     setErrorMessage("");
-    setResultHtml("");
 
     try {
       // Create form data
       const formData = new FormData();
       formData.append("file", file);
       formData.append("instructions", instructions);
+      formData.append("emails", JSON.stringify(emailList));
 
       // Call our API route (which proxies to n8n)
       const response = await fetch("/api/run-workflow", {
@@ -117,19 +166,9 @@ export default function IntextiveUploadPage() {
         throw new Error(formattedError);
       }
 
-      let data: WorkflowResponse;
-      try {
-        data = await response.json();
-      } catch (error) {
-        throw new Error("Invalid response format from server");
-      }
-
-      if (!data.html) {
-        throw new Error("Invalid response: missing html content");
-      }
-
-      setResultHtml(data.html);
       setState("success");
+      setCountdown(300); // Reset countdown
+      setCurrentStep("processing");
     } catch (error) {
       console.error("Error running workflow:", error);
       setErrorMessage(
@@ -139,27 +178,25 @@ export default function IntextiveUploadPage() {
     }
   };
 
-
-  const handleCopyHtml = async () => {
-    try {
-      await navigator.clipboard.writeText(resultHtml);
-      // Could add a toast notification here
-    } catch (error) {
-      console.error("Failed to copy HTML:", error);
-    }
+  const handleEdit = () => {
+    setState("idle");
+    setCurrentStep("review");
   };
 
-  const handleDownloadHtml = () => {
-    const blob = new Blob([resultHtml], { type: "text/html" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `output-${Date.now()}.html`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  const handleReplaceFile = () => {
+    fileInputRef.current?.click();
   };
+
+  const steps: Step[] = ["upload", "email", "instructions", "review", "processing"];
+  const stepLabels = {
+    upload: "Upload",
+    email: "Email Recipients",
+    instructions: "Processing Instructions",
+    review: "Review",
+    processing: "Processing"
+  };
+  const currentStepIndex = steps.indexOf(currentStep);
+  const progress = ((currentStepIndex + 1) / steps.length) * 100;
 
   return (
     <div className="flex h-screen flex-col bg-bluewhale overflow-hidden relative">
@@ -186,130 +223,386 @@ export default function IntextiveUploadPage() {
         </div>
       </header>
 
-      {/* Main Content - Three Columns */}
-      <main className="flex flex-1 gap-6 overflow-hidden p-6 relative z-10" style={{ minHeight: 0 }}>
-        {/* Box 1 - Upload & Instructions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: 0 }}
-          className="flex w-1/3 flex-col overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-xl"
-        >
-          <div className="flex-shrink-0 border-b border-white/20 px-6 py-4 text-center">
-            <h2 className="text-lg font-semibold text-white">Upload</h2>
-            <p className="text-sm text-white/70">Select PDF and add instructions</p>
+      {/* Progress Bar */}
+      <div className="flex-shrink-0 bg-white/5 px-8 py-4 relative z-10">
+        <div className="mx-auto max-w-4xl">
+          <div className="mb-2 flex items-center justify-between text-sm text-white/70">
+            {steps.map((step, index) => (
+              <div
+                key={step}
+                className={cn(
+                  "flex items-center gap-2 transition-colors",
+                  index <= currentStepIndex ? "text-white font-medium" : "text-white/50"
+                )}
+              >
+                <div
+                  className={cn(
+                    "flex h-8 w-8 items-center justify-center rounded-full border-2 transition-colors",
+                    index < currentStepIndex
+                      ? "border-persian bg-persian text-white"
+                      : index === currentStepIndex
+                      ? "border-persian bg-persian/20 text-white"
+                      : "border-white/30 bg-white/5 text-white/50"
+                  )}
+                >
+                  {index < currentStepIndex ? (
+                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    index + 1
+                  )}
+                </div>
+                <span className="hidden sm:inline">{stepLabels[step]}</span>
+              </div>
+            ))}
           </div>
-          <div className="flex-1 overflow-hidden p-6">
-            <form onSubmit={handleSubmit} className="flex h-full flex-col">
-                {/* File Input */}
-                <div className="flex-shrink-0">
-                  <label
-                    htmlFor="file-upload"
-                    className="mb-2 block text-sm font-medium text-white"
-                  >
-                    PDF File <span className="text-persian">*</span>
-                  </label>
-                  <input
-                    ref={fileInputRef}
-                    id="file-upload"
-                    type="file"
-                    accept="application/pdf"
-                    onChange={handleFileChange}
-                    disabled={state === "loading"}
-                    className="hidden"
-                  />
+          <div className="h-2 overflow-hidden rounded-full bg-white/10">
+            <motion.div
+              className="h-full bg-gradient-to-r from-persian to-lagoon"
+              initial={{ width: "0%" }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <main className="flex flex-1 overflow-hidden p-8 relative z-10" style={{ minHeight: 0 }}>
+        <div className="mx-auto w-full max-w-4xl">
+          <AnimatePresence mode="wait">
+            {/* Step 1: Upload */}
+            {currentStep === "upload" && (
+              <motion.div
+                key="upload"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="flex h-full flex-col overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-xl"
+              >
+                <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
+                  <h2 className="text-xl font-semibold text-white">Upload PDF</h2>
+                  <p className="text-sm text-white/70">Choose the file you want to process</p>
+                </div>
+                <div className="flex-1 overflow-auto p-6">
+                  <div className="space-y-6">
+                    {/* File Input */}
+                    <div>
+                      <label className="mb-2 block text-sm font-medium text-white">
+                        PDF File <span className="text-persian">*</span>
+                      </label>
+                      <input
+                        ref={fileInputRef}
+                        id="file-upload"
+                        type="file"
+                        accept="application/pdf"
+                        onChange={handleFileChange}
+                        disabled={state === "loading"}
+                        className="hidden"
+                      />
+                      <Button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={state === "loading"}
+                        className="w-full bg-persian text-white hover:bg-persian/90 disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        Choose File
+                      </Button>
+                      {file && (
+                        <p className="mt-2 text-sm text-white/70 truncate">
+                          Selected: {file.name}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* PDF Preview */}
+                    {pdfPreviewUrl && (
+                      <div className="overflow-hidden rounded-lg border border-white/20 bg-white/5">
+                        <div className="flex items-center justify-between border-b border-white/20 bg-white/5 px-4 py-2">
+                          <span className="text-xs text-white">PDF Preview</span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const link = document.createElement('a');
+                              link.href = pdfPreviewUrl;
+                              link.download = file?.name || 'document.pdf';
+                              link.click();
+                            }}
+                            className="rounded p-1.5 text-white transition-colors hover:bg-persian/20 hover:text-persian"
+                            title="Download PDF"
+                          >
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                          </button>
+                        </div>
+                        <iframe
+                          src={`${pdfPreviewUrl}#toolbar=0&navpanes=0&scrollbar=1`}
+                          className="h-96 w-full"
+                          title="PDF Preview"
+                        />
+                      </div>
+                    )}
+
+                    {/* Error Message */}
+                    {state === "error" && errorMessage && (
+                      <div className="rounded-lg border border-red-300/30 bg-red-500/10 px-4 py-3">
+                        <div className="text-sm text-red-200">{errorMessage}</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex-shrink-0 border-t border-white/20 px-6 py-4">
                   <Button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={state === "loading"}
+                    onClick={handleNextFromUpload}
+                    disabled={!file}
                     className="w-full bg-persian text-white hover:bg-persian/90 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Choose File
+                    Next: Email Recipients
                   </Button>
-                  {file && (
-                    <p className="mt-2 text-sm text-white/70 truncate">
-                      {file.name}
-                    </p>
-                  )}
                 </div>
+              </motion.div>
+            )}
 
-                {/* Instructions Textarea - Aligned to bottom */}
-                <div className="flex-1 flex flex-col mt-4">
-                  <label
-                    htmlFor="instructions"
-                    className="mb-2 block text-sm font-medium text-white"
-                  >
-                    Processing Instructions
-                  </label>
-                  <textarea
-                    id="instructions"
-                    value={instructions}
-                    onChange={(e) => setInstructions(e.target.value)}
-                    disabled={state === "loading"}
-                    placeholder="Add any specific instructions (optional)"
-                    className={cn(
-                      "block w-full flex-1 rounded-lg border border-white/30 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/50",
-                      "focus:border-persian focus:outline-none focus:ring-2 focus:ring-persian/30",
-                      "disabled:cursor-not-allowed disabled:opacity-50",
-                      "transition-colors duration-200",
-                      "resize-none"
-                    )}
-                  />
+            {/* Step 2: Email Recipients */}
+            {currentStep === "email" && (
+              <motion.div
+                key="email"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="flex h-full flex-col overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-xl"
+              >
+                <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
+                  <h2 className="text-xl font-semibold text-white">Email Recipients</h2>
+                  <p className="text-sm text-white/70">Who should receive the output?</p>
                 </div>
+                <div className="flex-1 overflow-auto p-6">
+                  <div className="space-y-4">
+                    <div>
+                      <label htmlFor="emails" className="mb-2 block text-sm font-medium text-white">
+                        Email Addresses <span className="text-persian">*</span>
+                      </label>
+                      <textarea
+                        id="emails"
+                        value={emails}
+                        onChange={(e) => setEmails(e.target.value)}
+                        placeholder="Enter one or more emails separated by commas, semicolons, or new lines"
+                        className={cn(
+                          "block w-full rounded-lg border border-white/30 bg-white px-4 py-3 text-sm text-bluewhale placeholder:text-bluewhale/50",
+                          "focus:border-persian focus:outline-none focus:ring-2 focus:ring-persian/30",
+                          "transition-colors duration-200",
+                          "resize-none"
+                        )}
+                        rows={6}
+                      />
+                      <p className="mt-2 text-xs text-white/70">
+                        The generated HTML will be emailed to each address above.
+                      </p>
+                    </div>
 
-                {/* Error Message */}
-                <AnimatePresence mode="wait">
-                  {state === "error" && errorMessage && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="mt-4 overflow-hidden rounded-lg border border-red-300/30 bg-red-500/10 px-4 py-3"
-                    >
-                      <div className="text-sm text-red-200 whitespace-pre-line">
-                        {errorMessage.split("\n").map((line, i) => {
-                          if (line.startsWith("Error Code:")) {
-                            return (
-                              <div key={i} className="mt-2 font-semibold text-red-100">
-                                {line}
-                              </div>
-                            );
-                          }
-                          if (line.startsWith("Troubleshooting:")) {
-                            return (
-                              <div key={i} className="mt-3 font-semibold text-red-100">
-                                {line}
-                              </div>
-                            );
-                          }
-                          if (/^\d+\./.test(line)) {
-                            return (
-                              <div key={i} className="ml-4 mt-1 text-red-200">
-                                {line}
-                              </div>
-                            );
-                          }
-                          return (
-                            <div key={i} className={i === 0 ? "font-semibold text-red-100" : "text-red-200"}>
-                              {line}
-                            </div>
-                          );
-                        })}
+                    {/* Error Message */}
+                    {state === "error" && errorMessage && (
+                      <div className="rounded-lg border border-red-300/30 bg-red-500/10 px-4 py-3">
+                        <div className="text-sm text-red-200">{errorMessage}</div>
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Submit Button */}
-                <div className="flex-shrink-0 mt-4">
-                  <Button
-                    type="submit"
-                    disabled={state === "loading" || !file}
-                    className={cn(
-                      "w-full bg-persian text-white hover:bg-persian/90",
-                      "disabled:cursor-not-allowed disabled:opacity-50"
                     )}
+                  </div>
+                </div>
+                <div className="flex-shrink-0 border-t border-white/20 px-6 py-4 flex gap-3">
+                  <Button
+                    onClick={() => setCurrentStep("upload")}
+                    className="flex-1 bg-white/10 text-white hover:bg-white/20 border border-white/30"
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    onClick={handleNextFromEmail}
+                    className="flex-1 bg-persian text-white hover:bg-persian/90"
+                  >
+                    Next: Instructions
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Step 3: Processing Instructions */}
+            {currentStep === "instructions" && (
+              <motion.div
+                key="instructions"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="flex h-full flex-col overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-xl"
+              >
+                <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
+                  <h2 className="text-xl font-semibold text-white">Processing Instructions</h2>
+                  <p className="text-sm text-white/70">Add any specific instructions (optional)</p>
+                </div>
+                <div className="flex-1 overflow-auto p-6">
+                  <div className="space-y-4">
+                    <div className="flex flex-col h-full">
+                      <label htmlFor="instructions" className="mb-2 block text-sm font-medium text-white">
+                        Instructions
+                      </label>
+                      <textarea
+                        id="instructions"
+                        value={instructions}
+                        onChange={(e) => setInstructions(e.target.value)}
+                        placeholder="Add any specific instructions for processing the PDF (optional)"
+                        className={cn(
+                          "block w-full flex-1 rounded-lg border border-white/30 bg-white px-4 py-3 text-sm text-bluewhale placeholder:text-bluewhale/50",
+                          "focus:border-persian focus:outline-none focus:ring-2 focus:ring-persian/30",
+                          "transition-colors duration-200",
+                          "resize-none min-h-[300px]"
+                        )}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex-shrink-0 border-t border-white/20 px-6 py-4 flex gap-3">
+                  <Button
+                    onClick={() => setCurrentStep("email")}
+                    className="flex-1 bg-white/10 text-white hover:bg-white/20 border border-white/30"
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    onClick={handleNextFromInstructions}
+                    className="flex-1 bg-persian text-white hover:bg-persian/90"
+                  >
+                    Next: Review
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Step 4: Review */}
+            {currentStep === "review" && (
+              <motion.div
+                key="review"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="flex h-full flex-col overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-xl"
+              >
+                <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
+                  <h2 className="text-xl font-semibold text-white">Review & Submit</h2>
+                  <p className="text-sm text-white/70">Review your submission before processing</p>
+                </div>
+                <div className="flex-1 overflow-auto p-6">
+                  <div className="space-y-6">
+                    {/* File Info */}
+                    <div className="rounded-lg border border-white/20 bg-white/5 p-4">
+                      <div className="mb-2 flex items-center justify-between">
+                        <h3 className="text-sm font-semibold text-white">PDF File</h3>
+                        <Button
+                          onClick={handleReplaceFile}
+                          className="text-xs bg-white/10 text-white hover:bg-white/20 px-3 py-1"
+                        >
+                          Replace
+                        </Button>
+                      </div>
+                      <p className="text-sm text-white">{file?.name}</p>
+                      {pdfPreviewUrl && (
+                        <div className="mt-3 overflow-hidden rounded border border-white/20">
+                          <iframe
+                            src={`${pdfPreviewUrl}#toolbar=0&navpanes=0&scrollbar=1`}
+                            className="h-48 w-full"
+                            title="PDF Preview"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Email Recipients */}
+                    <div className="rounded-lg border border-white/20 bg-white/5 p-4">
+                      <div className="mb-2 flex items-center justify-between">
+                        <h3 className="text-sm font-semibold text-white">Email Recipients</h3>
+                        <Button
+                          onClick={() => setCurrentStep("email")}
+                          className="text-xs bg-white/10 text-white hover:bg-white/20 px-3 py-1"
+                        >
+                          Edit
+                        </Button>
+                      </div>
+                      <ul className="space-y-1 text-sm text-white">
+                        {emailList.map((email, index) => (
+                          <li key={index}>• {email}</li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Processing Instructions */}
+                    <div className="rounded-lg border border-white/20 bg-white/5 p-4">
+                      <div className="mb-2 flex items-center justify-between">
+                        <h3 className="text-sm font-semibold text-white">Processing Instructions</h3>
+                        <Button
+                          onClick={() => setCurrentStep("instructions")}
+                          className="text-xs bg-white/10 text-white hover:bg-white/20 px-3 py-1"
+                        >
+                          Edit
+                        </Button>
+                      </div>
+                      <p className="text-sm text-white">
+                        {instructions || <em className="text-white/70">No specific instructions provided</em>}
+                      </p>
+                    </div>
+
+                    {/* Error Message */}
+                    {state === "error" && errorMessage && (
+                      <div className="rounded-lg border border-red-300/30 bg-red-500/10 px-4 py-3">
+                        <div className="text-sm text-red-200 whitespace-pre-line">
+                          {errorMessage.split("\n").map((line, i) => {
+                            if (line.startsWith("Error Code:")) {
+                              return (
+                                <div key={i} className="mt-2 font-semibold text-red-100">
+                                  {line}
+                                </div>
+                              );
+                            }
+                            if (line.startsWith("Troubleshooting:")) {
+                              return (
+                                <div key={i} className="mt-3 font-semibold text-red-100">
+                                  {line}
+                                </div>
+                              );
+                            }
+                            if (/^\d+\./.test(line)) {
+                              return (
+                                <div key={i} className="ml-4 mt-1 text-red-200">
+                                  {line}
+                                </div>
+                              );
+                            }
+                            return (
+                              <div key={i} className={i === 0 ? "font-semibold text-red-100" : "text-red-200"}>
+                                {line}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex-shrink-0 border-t border-white/20 px-6 py-4 flex gap-3">
+                  <Button
+                    onClick={() => setCurrentStep("instructions")}
+                    disabled={state === "loading"}
+                    className="flex-1 bg-white/10 text-white hover:bg-white/20 border border-white/30 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={state === "loading"}
+                    className="flex-1 bg-persian text-white hover:bg-persian/90 disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     {state === "loading" ? (
                       <>
@@ -332,219 +625,103 @@ export default function IntextiveUploadPage() {
                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                           />
                         </svg>
-                        Processing...
+                        Submitting...
                       </>
                     ) : (
-                      "Generate Output"
+                      "Submit"
                     )}
                   </Button>
                 </div>
-              </form>
-            </div>
-        </motion.div>
+              </motion.div>
+            )}
 
-        {/* Box 2 - Input Preview */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
-          className="flex w-1/3 flex-col overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-xl"
-        >
-          <div className="flex-shrink-0 border-b border-white/20 px-6 py-4 text-center">
-            <h2 className="text-lg font-semibold text-white">Input Preview</h2>
-            <p className="text-sm text-white/70">
-              {pdfPreviewUrl ? file?.name : "PDF preview will appear here"}
-            </p>
-          </div>
-          <div className="flex-1 overflow-hidden flex flex-col">
-            {pdfPreviewUrl ? (
-              <>
-                {/* Custom PDF Toolbar */}
-                <div className="flex-shrink-0 flex items-center justify-between border-b border-white/20 bg-white/5 px-4 py-2">
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      className="rounded p-1.5 text-white transition-colors hover:bg-persian/20 hover:text-persian"
-                      title="Zoom out"
-                    >
-                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM13 10H7" />
+            {/* Step 5: Processing Status */}
+            {currentStep === "processing" && (
+              <motion.div
+                key="processing"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3 }}
+                className="flex h-full flex-col overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-xl"
+              >
+                <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
+                  <h2 className="text-xl font-semibold text-white">Processing Your Request</h2>
+                  <p className="text-sm text-white/70">Your PDF is being processed</p>
+                </div>
+                <div className="flex-1 overflow-auto p-6 flex items-center justify-center">
+                  <div className="max-w-md text-center space-y-6">
+                    {/* Animated Spinner */}
+                    <div className="flex justify-center">
+                      <svg
+                        className="h-16 w-16 animate-spin text-persian"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
                       </svg>
-                    </button>
-                    <button
-                      type="button"
-                      className="rounded p-1.5 text-white transition-colors hover:bg-persian/20 hover:text-persian"
-                      title="Zoom in"
-                    >
-                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                      </svg>
-                    </button>
+                    </div>
+
+                    {/* Countdown */}
+                    <div className="rounded-lg border border-white/20 bg-white/5 p-6">
+                      <div className="text-4xl font-bold text-white mb-2">
+                        {formatTime(countdown)}
+                      </div>
+                      <p className="text-sm text-white/70">Estimated time remaining</p>
+                    </div>
+
+                    {/* Message */}
+                    <div className="space-y-3">
+                      <p className="text-white">
+                        Your output will be emailed to:
+                      </p>
+                      <div className="rounded-lg border border-white/20 bg-white/5 p-4">
+                        <ul className="space-y-1 text-sm text-white/70">
+                          {emailList.map((email, index) => (
+                            <li key={index}>• {email}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <p className="text-sm text-white/70">
+                        You can safely close this page. We&apos;ll send you an email when processing is complete.
+                      </p>
+                    </div>
                   </div>
-                  <span className="text-xs text-white">PDF Document</span>
-                  <button
-                    type="button"
+                </div>
+                <div className="flex-shrink-0 border-t border-white/20 px-6 py-4">
+                  <Button
                     onClick={() => {
-                      const link = document.createElement('a');
-                      link.href = pdfPreviewUrl;
-                      link.download = file?.name || 'document.pdf';
-                      link.click();
+                      setCurrentStep("upload");
+                      setState("idle");
+                      setFile(null);
+                      setEmails("");
+                      setEmailList([]);
+                      setInstructions("");
+                      setPdfPreviewUrl("");
+                      setErrorMessage("");
+                      setCountdown(300);
                     }}
-                    className="rounded p-1.5 text-white transition-colors hover:bg-persian/20 hover:text-persian"
-                    title="Download PDF"
+                    className="w-full bg-white/10 text-white hover:bg-white/20 border border-white/30"
                   >
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                  </button>
+                    Process Another File
+                  </Button>
                 </div>
-                <iframe
-                  src={`${pdfPreviewUrl}#toolbar=0&navpanes=0&scrollbar=1`}
-                  className="flex-1 w-full"
-                  title="PDF Preview"
-                />
-              </>
-            ) : (
-              <div className="flex h-full items-center justify-center p-6">
-                <div className="text-center">
-                  <svg
-                    className="mx-auto mb-4 h-16 w-16 text-white/30"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                  <p className="text-white/50">Upload a PDF to preview</p>
-                </div>
-              </div>
+              </motion.div>
             )}
-          </div>
-        </motion.div>
-
-        {/* Box 3 - Output Preview */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
-          className="flex w-1/3 flex-col overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-xl"
-        >
-          <div className="flex flex-shrink-0 items-center justify-between border-b border-white/20 px-6 py-4">
-            <div className="flex-1 text-center">
-              <h2 className="text-lg font-semibold text-white">Output Preview</h2>
-              <p className="text-sm text-white/70">
-                {resultHtml ? "Generated output" : "Output will appear here"}
-              </p>
-            </div>
-            {resultHtml && (
-              <div className="flex gap-2">
-                <Button
-                  type="button"
-                  onClick={handleCopyHtml}
-                  variant="secondary"
-                  size="sm"
-                  className="border-white/30 bg-white/5 text-white hover:bg-white/10"
-                >
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                    />
-                  </svg>
-                </Button>
-                <Button
-                  type="button"
-                  onClick={handleDownloadHtml}
-                  variant="secondary"
-                  size="sm"
-                  className="border-white/30 bg-white/5 text-white hover:bg-white/10"
-                >
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                    />
-                  </svg>
-                </Button>
-              </div>
-            )}
-          </div>
-          <div className="flex-1 overflow-hidden relative">
-            {state === "loading" ? (
-              <div className="flex h-full items-center justify-center p-6">
-                <div className="text-center">
-                  <svg
-                    className="mx-auto mb-4 h-12 w-12 animate-spin text-persian"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                  <p className="text-white font-medium">Processing file...</p>
-                </div>
-              </div>
-            ) : resultHtml ? (
-              <iframe
-                srcDoc={resultHtml}
-                className="h-full w-full bg-white"
-                title="Output Preview"
-                sandbox="allow-same-origin allow-scripts"
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center p-6">
-                <div className="text-center">
-                  <svg
-                    className="mx-auto mb-4 h-16 w-16 text-white/30"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                  <p className="text-white/50">Generate output to preview</p>
-                </div>
-              </div>
-            )}
-          </div>
-        </motion.div>
+          </AnimatePresence>
+        </div>
       </main>
     </div>
   );
 }
-
