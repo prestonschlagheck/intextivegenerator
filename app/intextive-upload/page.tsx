@@ -710,21 +710,19 @@ export default function IntextiveUploadPage() {
                       <p className="text-center text-white font-medium">
                         Your output will be emailed to:
                       </p>
-                      <div className="rounded-lg border border-white/20 bg-white/5 p-4">
-                        <ul className="space-y-1 text-sm text-white text-center">
-                          {emailList.map((email, index) => (
-                            <li key={index}>{email}</li>
-                          ))}
-                        </ul>
-                      </div>
-                      <p className="text-center text-sm text-white mt-4">
-                        You can safely close this page. We&apos;ll send you an email when processing is complete.
-            </p>
-          </div>
+                      <ul className="space-y-1 text-sm text-white text-center">
+                        {emailList.map((email, index) => (
+                          <li key={index}>{email}</li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
-                <div className="flex-shrink-0 border-t border-white/20 bg-white/5 backdrop-blur-md">
-                  <Button
+                <div className="flex-shrink-0 border-t border-white/20 bg-white/5 backdrop-blur-md space-y-2 px-6 py-4">
+                  <p className="text-center text-sm text-white">
+                    You can safely close this page. We&apos;ll send you an email when processing is complete.
+                  </p>
+                  <button
                     onClick={() => {
                       setCurrentStep("upload");
                       setState("idle");
@@ -737,10 +735,12 @@ export default function IntextiveUploadPage() {
                       setCountdown(300);
                     }}
                     disabled={countdown > 0}
-                    className="w-full bg-white/10 text-white hover:bg-white/20 border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed rounded-none py-6 text-lg font-semibold"
+                    className="w-full bg-white/10 text-white hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed rounded-none py-8 text-lg font-semibold transition-colors group"
                   >
-                    {countdown > 0 ? "Processing..." : "Process Another File"}
-                  </Button>
+                    <span className="group-hover:scale-105 inline-block transition-transform">
+                      {countdown > 0 ? "Processing..." : "Process Another File"}
+                    </span>
+                  </button>
           </div>
         </motion.div>
             )}
