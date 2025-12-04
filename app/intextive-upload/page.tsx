@@ -698,8 +698,8 @@ export default function IntextiveUploadPage() {
                       <div className="h-6 w-full overflow-hidden rounded-full bg-white/10 border border-white/20">
                         <motion.div
                           className="h-full bg-gradient-to-r from-persian to-lagoon"
-                          initial={{ width: "100%" }}
-                          animate={{ width: `${(countdown / 300) * 100}%` }}
+                          initial={{ width: "0%" }}
+                          animate={{ width: `${Math.min(100, Math.max(0, (1 - countdown / 300) * 100))}%` }}
                           transition={{ duration: 0.5, ease: "linear" }}
                         />
                       </div>
@@ -715,13 +715,13 @@ export default function IntextiveUploadPage() {
                           <li key={index}>{email}</li>
                         ))}
                       </ul>
+                      <p className="text-center text-sm text-white">
+                        You can safely close this page. We&apos;ll send you an email when processing is complete.
+                      </p>
                     </div>
                   </div>
                 </div>
-                <div className="flex-shrink-0 border-t border-white/20 bg-white/5 backdrop-blur-md space-y-2 px-6 py-4">
-                  <p className="text-center text-sm text-white">
-                    You can safely close this page. We&apos;ll send you an email when processing is complete.
-                  </p>
+                <div className="flex-shrink-0 border-t border-white/20 bg-white/5 backdrop-blur-md px-6 py-4">
                   <button
                     onClick={() => {
                       setCurrentStep("upload");
