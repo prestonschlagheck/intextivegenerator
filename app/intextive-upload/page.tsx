@@ -296,12 +296,12 @@ export default function IntextiveUploadPage() {
               >
                 <div
                   className={cn(
-                    "flex h-12 w-12 items-center justify-center rounded-full transition-all text-2xl font-bold text-white mb-2",
+                    "flex h-12 w-12 items-center justify-center rounded-full transition-all text-2xl font-bold text-white mb-2 relative",
                     index < currentStepIndex
-                      ? "border-4 border-persian bg-persian shadow-lg"
+                      ? "border-4 border-persian bg-persian shadow-lg ring-4 ring-bluewhale"
                       : index === currentStepIndex
-                      ? "border-4 border-persian bg-persian/20 shadow-md"
-                      : "border-4 border-white/5 bg-white/5"
+                      ? "border-4 border-persian bg-persian/20 shadow-md ring-4 ring-bluewhale"
+                      : "border-4 border-bluewhale bg-bluewhale ring-4 ring-bluewhale"
                   )}
                 >
                   {index < currentStepIndex ? (
