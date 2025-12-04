@@ -266,13 +266,16 @@ export default function IntextiveUploadPage() {
         {/* Progress Steps - Individual Sections */}
         <div className="flex-shrink-0 border-b border-white/20 bg-white/5 backdrop-blur-md">
           <div className="flex items-stretch relative">
-            {/* Progress Line */}
-            <div className="absolute top-[2.5rem] left-0 right-0 h-1 flex items-center px-[10%]">
-              <div className="relative w-full h-full bg-white/10 rounded-full">
-        <motion.div
+            {/* Progress Line - Only extends to current step */}
+            <div className="absolute top-[2.5rem] left-[10%] right-[10%] h-1 flex items-center z-0">
+              <div className="relative w-full h-full">
+                <div className="absolute top-0 left-0 w-full h-full bg-white/10 rounded-full" />
+                <motion.div
                   className="absolute top-0 left-0 h-full bg-gradient-to-r from-persian to-lagoon rounded-full"
                   initial={{ width: "0%" }}
-                  animate={{ width: `${progress}%` }}
+                  animate={{ 
+                    width: currentStepIndex === 0 ? "0%" : `${(currentStepIndex / (steps.length - 1)) * 100}%` 
+                  }}
                   transition={{ duration: 0.5, ease: "easeInOut" }}
                 />
               </div>
@@ -296,12 +299,12 @@ export default function IntextiveUploadPage() {
               >
                 <div
                   className={cn(
-                    "flex h-12 w-12 items-center justify-center rounded-full transition-all text-2xl font-bold text-white mb-2 relative",
+                    "flex h-12 w-12 items-center justify-center rounded-full transition-all text-2xl font-bold text-white mb-2 relative shadow-[0_0_0_8px_rgb(13,41,62)]",
                     index < currentStepIndex
-                      ? "border-4 border-persian bg-persian shadow-lg ring-4 ring-bluewhale"
+                      ? "border-4 border-persian bg-persian shadow-lg"
                       : index === currentStepIndex
-                      ? "border-4 border-persian bg-persian/20 shadow-md ring-4 ring-bluewhale"
-                      : "border-4 border-bluewhale bg-bluewhale ring-4 ring-bluewhale"
+                      ? "border-4 border-persian bg-persian/20 shadow-md"
+                      : "border-4 border-bluewhale bg-bluewhale"
                   )}
                 >
                   {index < currentStepIndex ? (
