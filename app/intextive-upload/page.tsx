@@ -373,13 +373,13 @@ export default function IntextiveUploadPage() {
                   )}
                 </div>
                 <div className="flex-shrink-0 border-t border-white/20 bg-white/5 backdrop-blur-md">
-                  <Button
+                  <button
                     onClick={handleNextFromUpload}
                     disabled={!file}
-                    className="w-full h-full bg-persian text-white hover:bg-persian/90 disabled:cursor-not-allowed disabled:opacity-50 rounded-none py-6 text-lg font-semibold"
+                    className="w-full bg-persian text-white hover:bg-persian/90 disabled:cursor-not-allowed disabled:opacity-50 py-8 text-lg font-semibold transition-colors group"
                   >
-                    Next: Email Recipients
-                  </Button>
+                    <span className="group-hover:scale-105 inline-block transition-transform">Next: Email Recipients</span>
+                  </button>
                 </div>
               </motion.div>
             )}
@@ -394,14 +394,14 @@ export default function IntextiveUploadPage() {
                 transition={{ duration: 0.3 }}
                 className="flex h-full w-full flex-col overflow-hidden"
               >
-                <div className="flex-shrink-0 border-b border-white/20 px-6 py-4 text-center bg-white/5 backdrop-blur-md">
-                  <h2 className="text-xl font-semibold text-white">Email Recipients</h2>
-                  <p className="text-sm text-white">Who should receive the output?</p>
+                <div className="flex-shrink-0 border-b border-white/20 px-6 py-6 text-center bg-white/5 backdrop-blur-md">
+                  <h2 className="text-2xl font-semibold text-white">Email Recipients</h2>
+                  <p className="text-base text-white">Who should receive the output?</p>
                 </div>
                 <div className="flex-1 overflow-auto p-6">
                   <div className="space-y-4">
                     <div>
-                      <label htmlFor="emails" className="mb-2 block text-sm font-medium text-white">
+                      <label htmlFor="emails" className="mb-3 block text-lg font-medium text-white">
                         Email Addresses <span className="text-persian">*</span>
                       </label>
                       <input
@@ -410,15 +410,15 @@ export default function IntextiveUploadPage() {
                         value={emails}
                         onChange={(e) => setEmails(e.target.value)}
                         onKeyDown={handleEmailKeyDown}
-                        placeholder="Type an email and press Enter or semicolon"
+                        placeholder="Type an email and press Enter"
                         className={cn(
-                          "block w-full rounded-lg border border-white/30 bg-white px-4 py-3 text-sm text-bluewhale placeholder:text-bluewhale/50",
+                          "block w-full rounded-lg border border-white/30 bg-white px-4 py-4 text-base text-bluewhale placeholder:text-bluewhale/50",
                           "focus:border-persian focus:outline-none focus:ring-2 focus:ring-persian/30",
                           "transition-colors duration-200"
                         )}
                       />
-                      <p className="mt-2 text-xs text-white">
-                        Press Enter or semicolon after each email address. The generated HTML will be emailed to each address.
+                      <p className="mt-3 text-sm text-white">
+                        Press Enter after each email address.
                       </p>
                     </div>
 
@@ -458,18 +458,18 @@ export default function IntextiveUploadPage() {
                   </div>
                 </div>
                 <div className="flex-shrink-0 border-t border-white/20 bg-white/5 backdrop-blur-md flex">
-                  <Button
+                  <button
                     onClick={() => setCurrentStep("upload")}
-                    className="flex-1 bg-white/10 text-white hover:bg-white/20 border border-white/30 rounded-none py-6 text-lg font-semibold"
+                    className="flex-1 bg-white/10 text-white hover:bg-white/20 border-r border-white/30 py-8 text-lg font-semibold transition-colors group"
                   >
-                    Back
-                  </Button>
-                  <Button
+                    <span className="group-hover:scale-105 inline-block transition-transform">Back</span>
+                  </button>
+                  <button
                     onClick={handleNextFromEmail}
-                    className="flex-1 bg-persian text-white hover:bg-persian/90 rounded-none py-6 text-lg font-semibold"
+                    className="flex-1 bg-persian text-white hover:bg-persian/90 py-8 text-lg font-semibold transition-colors group"
                   >
-                    Next: Instructions
-                  </Button>
+                    <span className="group-hover:scale-105 inline-block transition-transform">Next: Instructions</span>
+                  </button>
                 </div>
               </motion.div>
             )}
@@ -510,18 +510,18 @@ export default function IntextiveUploadPage() {
                   </div>
                 </div>
                 <div className="flex-shrink-0 border-t border-white/20 bg-white/5 backdrop-blur-md flex">
-                  <Button
+                  <button
                     onClick={() => setCurrentStep("email")}
-                    className="flex-1 bg-white/10 text-white hover:bg-white/20 border border-white/30 rounded-none py-6 text-lg font-semibold"
+                    className="flex-1 bg-white/10 text-white hover:bg-white/20 border-r border-white/30 py-8 text-lg font-semibold transition-colors group"
                   >
-                    Back
-                  </Button>
-                  <Button
+                    <span className="group-hover:scale-105 inline-block transition-transform">Back</span>
+                  </button>
+                  <button
                     onClick={handleNextFromInstructions}
-                    className="flex-1 bg-persian text-white hover:bg-persian/90 rounded-none py-6 text-lg font-semibold"
+                    className="flex-1 bg-persian text-white hover:bg-persian/90 py-8 text-lg font-semibold transition-colors group"
                   >
-                    Next: Review
-                  </Button>
+                    <span className="group-hover:scale-105 inline-block transition-transform">Next: Review</span>
+                  </button>
                 </div>
               </motion.div>
             )}
@@ -540,9 +540,9 @@ export default function IntextiveUploadPage() {
                   <h2 className="text-xl font-semibold text-white">Review & Submit</h2>
                   <p className="text-sm text-white">Review your submission before processing</p>
                 </div>
-                <div className="flex-1 overflow-hidden p-6 flex flex-col">
-                  {/* PDF File Preview - Takes most space */}
-                  <div className="flex-1 overflow-hidden rounded-lg border border-white/20 bg-white/5 p-4 mb-4 flex flex-col">
+                <div className="flex-1 overflow-hidden p-6 flex gap-4">
+                  {/* Left Half - PDF File Preview */}
+                  <div className="flex-1 overflow-hidden rounded-lg border border-white/20 bg-white/5 p-4 flex flex-col">
                     <div className="flex-shrink-0 mb-2 flex items-center justify-between">
                       <div>
                         <h3 className="text-sm font-semibold text-white">PDF File</h3>
@@ -569,10 +569,10 @@ export default function IntextiveUploadPage() {
                     )}
                   </div>
 
-                  {/* Bottom Section - Email Recipients and Processing Instructions */}
-                  <div className="flex-shrink-0 grid grid-cols-2 gap-4">
-                    {/* Email Recipients */}
-                    <div className="rounded-lg border border-white/20 bg-white/5 p-4">
+                  {/* Right Half - Email Recipients (top 1/3) and Processing Instructions (bottom 2/3) */}
+                  <div className="flex-1 flex flex-col gap-4">
+                    {/* Email Recipients - Top 1/3 */}
+                    <div className="flex-[1] overflow-hidden rounded-lg border border-white/20 bg-white/5 p-4">
                       <div className="mb-2 flex items-center justify-between">
                         <h3 className="text-sm font-semibold text-white">Email Recipients</h3>
                         <Button
@@ -582,16 +582,16 @@ export default function IntextiveUploadPage() {
                           Edit
                         </Button>
                       </div>
-                      <ul className="space-y-1 text-sm text-white">
+                      <ul className="space-y-1 text-sm text-white overflow-auto max-h-full">
                         {emailList.map((email, index) => (
                           <li key={index}>• {email}</li>
                         ))}
                       </ul>
                     </div>
 
-                    {/* Processing Instructions */}
-                    <div className="rounded-lg border border-white/20 bg-white/5 p-4">
-                      <div className="mb-2 flex items-center justify-between">
+                    {/* Processing Instructions - Bottom 2/3 */}
+                    <div className="flex-[2] overflow-hidden rounded-lg border border-white/20 bg-white/5 p-4 flex flex-col">
+                      <div className="mb-2 flex-shrink-0 flex items-center justify-between">
                         <h3 className="text-sm font-semibold text-white">Processing Instructions</h3>
                         <Button
                           onClick={() => setCurrentStep("instructions")}
@@ -600,7 +600,7 @@ export default function IntextiveUploadPage() {
                           Edit
                         </Button>
                       </div>
-                      <p className="text-sm text-white">
+                      <p className="text-sm text-white overflow-auto flex-1">
                         {instructions || <em className="text-white">No specific instructions provided</em>}
                       </p>
                     </div>
@@ -643,22 +643,22 @@ export default function IntextiveUploadPage() {
                   )}
                 </div>
                 <div className="flex-shrink-0 border-t border-white/20 bg-white/5 backdrop-blur-md flex">
-                  <Button
+                  <button
                     onClick={() => setCurrentStep("instructions")}
                     disabled={state === "loading"}
-                    className="flex-1 bg-white/10 text-white hover:bg-white/20 border border-white/30 disabled:cursor-not-allowed disabled:opacity-50 rounded-none py-6 text-lg font-semibold"
+                    className="flex-1 bg-white/10 text-white hover:bg-white/20 border-r border-white/30 disabled:cursor-not-allowed disabled:opacity-50 py-8 text-lg font-semibold transition-colors group"
                   >
-                    Back
-                  </Button>
-                  <Button
+                    <span className="group-hover:scale-105 inline-block transition-transform">Back</span>
+                  </button>
+                  <button
                     onClick={handleSubmit}
                     disabled={state === "loading"}
-                    className="flex-1 bg-persian text-white hover:bg-persian/90 disabled:cursor-not-allowed disabled:opacity-50 rounded-none py-6 text-lg font-semibold"
+                    className="flex-1 bg-persian text-white hover:bg-persian/90 disabled:cursor-not-allowed disabled:opacity-50 py-8 text-lg font-semibold transition-colors group"
                   >
                     {state === "loading" ? (
                       <>
                         <svg
-                          className="mr-2 h-4 w-4 animate-spin"
+                          className="mr-2 h-4 w-4 animate-spin inline-block"
                           fill="none"
                           viewBox="0 0 24 24"
                         >
@@ -679,9 +679,9 @@ export default function IntextiveUploadPage() {
                         Submitting...
                       </>
                     ) : (
-                      "Submit"
+                      <span className="group-hover:scale-105 inline-block transition-transform">Submit</span>
                     )}
-                  </Button>
+                  </button>
                 </div>
               </motion.div>
             )}
