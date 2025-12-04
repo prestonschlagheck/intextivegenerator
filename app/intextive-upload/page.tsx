@@ -228,7 +228,7 @@ export default function IntextiveUploadPage() {
   const progress = ((currentStepIndex + 1) / steps.length) * 100;
 
   return (
-    <div className="flex h-screen flex-col bg-bluewhale overflow-hidden relative">
+    <div className="flex h-screen flex-col bg-bluewhale overflow-hidden relative p-8">
       {/* Background Effects */}
       <div className="fixed inset-0 -z-10">
         <div className="absolute inset-0 bg-gradient-to-br from-bluewhale via-bluewhale/90 to-midnight opacity-90" />
@@ -236,26 +236,16 @@ export default function IntextiveUploadPage() {
         <div className="absolute bottom-0 right-16 h-[380px] w-[380px] rounded-full bg-persian/20 blur-3xl" />
       </div>
       
-      {/* Header */}
-      <header className="flex-shrink-0 border-b border-white/10 bg-transparent relative z-10">
-        <div className="flex items-center justify-between px-8 py-2">
-          <Image
-            src="/Images/Logos/GLCLogo.png"
-            alt="GLC logo"
-            width={160}
-            height={160}
-            className="h-[100px] w-[100px] object-contain brightness-0 invert"
-            priority
-          />
-          <h1 className="text-2xl font-bold text-white">Intextive Generator</h1>
-          <div className="w-[100px]" /> {/* Spacer for centering */}
+      {/* Main Container - Full Height */}
+      <div className="flex flex-1 flex-col overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-xl relative z-10">
+        {/* Title at Top of Container */}
+        <div className="flex-shrink-0 border-b border-white/20 px-6 py-6 text-center">
+          <h1 className="text-3xl font-bold text-white">Intextive Generator</h1>
         </div>
-      </header>
 
-      {/* Progress Bar */}
-      <div className="flex-shrink-0 bg-white/5 px-8 py-4 relative z-10">
-        <div className="mx-auto max-w-4xl">
-          <div className="mb-2 flex items-center justify-between text-sm text-white/70">
+        {/* Progress Steps */}
+        <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
+          <div className="mb-3 flex items-center justify-between text-sm">
             {steps.map((step, index) => (
               <div
                 key={step}
@@ -266,7 +256,7 @@ export default function IntextiveUploadPage() {
               >
                 <div
                   className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-full border-2 transition-colors",
+                    "flex h-8 w-8 items-center justify-center rounded-full border-2 transition-colors text-sm font-semibold",
                     index < currentStepIndex
                       ? "border-persian bg-persian text-white"
                       : index === currentStepIndex
@@ -282,7 +272,7 @@ export default function IntextiveUploadPage() {
                     index + 1
                   )}
                 </div>
-                <span className="hidden sm:inline">{stepLabels[step]}</span>
+                <span className="text-xs sm:text-sm">{stepLabels[step]}</span>
               </div>
             ))}
           </div>
@@ -295,11 +285,9 @@ export default function IntextiveUploadPage() {
             />
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <main className="flex flex-1 overflow-hidden p-8 relative z-10" style={{ minHeight: 0 }}>
-        <div className="mx-auto w-full max-w-4xl">
+        {/* Main Content */}
+        <div className="flex flex-1 overflow-hidden" style={{ minHeight: 0 }}>
           <AnimatePresence mode="wait">
             {/* Step 1: Upload */}
             {currentStep === "upload" && (
@@ -309,7 +297,7 @@ export default function IntextiveUploadPage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
-                className="flex h-full flex-col overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-xl"
+                className="flex h-full w-full flex-col overflow-hidden"
               >
                 <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
                   <h2 className="text-xl font-semibold text-white">Upload PDF</h2>
@@ -407,7 +395,7 @@ export default function IntextiveUploadPage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
-                className="flex h-full flex-col overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-xl"
+                className="flex h-full w-full flex-col overflow-hidden"
               >
                 <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
                   <h2 className="text-xl font-semibold text-white">Email Recipients</h2>
@@ -497,7 +485,7 @@ export default function IntextiveUploadPage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
-                className="flex h-full flex-col overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-xl"
+                className="flex h-full w-full flex-col overflow-hidden"
               >
                 <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
                   <h2 className="text-xl font-semibold text-white">Processing Instructions</h2>
@@ -549,7 +537,7 @@ export default function IntextiveUploadPage() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
-                className="flex h-full flex-col overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-xl"
+                className="flex h-full w-full flex-col overflow-hidden"
               >
                 <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
                   <h2 className="text-xl font-semibold text-white">Review & Submit</h2>
@@ -708,7 +696,7 @@ export default function IntextiveUploadPage() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3 }}
-                className="flex h-full flex-col overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-xl"
+                className="flex h-full w-full flex-col overflow-hidden"
               >
                 <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
                   <h2 className="text-xl font-semibold text-white">Processing Your Request</h2>
@@ -777,7 +765,7 @@ export default function IntextiveUploadPage() {
             )}
           </AnimatePresence>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
