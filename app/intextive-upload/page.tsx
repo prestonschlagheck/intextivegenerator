@@ -238,22 +238,25 @@ export default function IntextiveUploadPage() {
       
       {/* Main Container - Full Height */}
       <div className="flex flex-1 flex-col overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-xl relative z-10">
-        {/* Title at Top of Container */}
-        <div className="flex-shrink-0 border-b border-white/20 px-6 py-6 text-center">
+        {/* Title at Top of Container - Foggy Bar */}
+        <div className="flex-shrink-0 border-b border-white/20 px-6 py-6 text-center bg-white/5 backdrop-blur-md">
           <h1 className="text-3xl font-bold text-white">Intextive Generator</h1>
         </div>
 
-        {/* Progress Steps */}
-        <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
-          <div className="mb-3 flex items-center justify-between text-sm">
+        {/* Progress Steps - Individual Sections */}
+        <div className="flex-shrink-0 border-b border-white/20 bg-white/5 backdrop-blur-md">
+          <div className="flex items-stretch divide-x divide-white/20">
             {steps.map((step, index) => (
               <div
                 key={step}
-                className="flex items-center gap-2 transition-colors text-white"
+                className={cn(
+                  "flex-1 flex flex-col items-center justify-center py-4 px-2 transition-all",
+                  index <= currentStepIndex ? "bg-white/5" : "bg-transparent"
+                )}
               >
                 <div
                   className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-full border-2 transition-colors text-sm font-semibold text-white",
+                    "flex h-12 w-12 items-center justify-center rounded-full border-2 transition-colors text-2xl font-bold text-white mb-2",
                     index < currentStepIndex
                       ? "border-persian bg-persian"
                       : index === currentStepIndex
@@ -262,18 +265,18 @@ export default function IntextiveUploadPage() {
                   )}
                 >
                   {index < currentStepIndex ? (
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   ) : (
                     index + 1
                   )}
                 </div>
-                <span className="text-xs sm:text-sm font-medium">{stepLabels[step]}</span>
+                <span className="text-xs font-semibold text-white text-center">{stepLabels[step]}</span>
               </div>
             ))}
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-white/10">
+          <div className="h-2 overflow-hidden bg-white/10">
             <motion.div
               className="h-full bg-gradient-to-r from-persian to-lagoon"
               initial={{ width: "0%" }}
@@ -296,16 +299,13 @@ export default function IntextiveUploadPage() {
                 transition={{ duration: 0.3 }}
                 className="flex h-full w-full flex-col overflow-hidden"
               >
-                <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
+                <div className="flex-shrink-0 border-b border-white/20 px-6 py-4 text-center bg-white/5 backdrop-blur-md">
                   <h2 className="text-xl font-semibold text-white">Upload PDF</h2>
                   <p className="text-sm text-white">Choose the file you want to process</p>
                 </div>
                 <div className="flex-1 overflow-hidden p-6 flex flex-col">
                   {/* File Input */}
                   <div className="flex-shrink-0 mb-4">
-                    <label className="mb-2 block text-sm font-medium text-white">
-                      PDF File <span className="text-persian">*</span>
-                    </label>
                     <input
                       ref={fileInputRef}
                       id="file-upload"
@@ -372,11 +372,11 @@ export default function IntextiveUploadPage() {
                     </div>
                   )}
                 </div>
-                <div className="flex-shrink-0 border-t border-white/20 px-6 py-4">
+                <div className="flex-shrink-0 border-t border-white/20 bg-white/5 backdrop-blur-md">
                   <Button
                     onClick={handleNextFromUpload}
                     disabled={!file}
-                    className="w-full bg-persian text-white hover:bg-persian/90 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="w-full h-full bg-persian text-white hover:bg-persian/90 disabled:cursor-not-allowed disabled:opacity-50 rounded-none py-6 text-lg font-semibold"
                   >
                     Next: Email Recipients
                   </Button>
@@ -394,7 +394,7 @@ export default function IntextiveUploadPage() {
                 transition={{ duration: 0.3 }}
                 className="flex h-full w-full flex-col overflow-hidden"
               >
-                <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
+                <div className="flex-shrink-0 border-b border-white/20 px-6 py-4 text-center bg-white/5 backdrop-blur-md">
                   <h2 className="text-xl font-semibold text-white">Email Recipients</h2>
                   <p className="text-sm text-white">Who should receive the output?</p>
                 </div>
@@ -457,16 +457,16 @@ export default function IntextiveUploadPage() {
                     )}
                   </div>
                 </div>
-                <div className="flex-shrink-0 border-t border-white/20 px-6 py-4 flex gap-3">
+                <div className="flex-shrink-0 border-t border-white/20 bg-white/5 backdrop-blur-md flex">
                   <Button
                     onClick={() => setCurrentStep("upload")}
-                    className="flex-1 bg-white/10 text-white hover:bg-white/20 border border-white/30"
+                    className="flex-1 bg-white/10 text-white hover:bg-white/20 border border-white/30 rounded-none py-6 text-lg font-semibold"
                   >
                     Back
                   </Button>
                   <Button
                     onClick={handleNextFromEmail}
-                    className="flex-1 bg-persian text-white hover:bg-persian/90"
+                    className="flex-1 bg-persian text-white hover:bg-persian/90 rounded-none py-6 text-lg font-semibold"
                   >
                     Next: Instructions
                   </Button>
@@ -484,7 +484,7 @@ export default function IntextiveUploadPage() {
                 transition={{ duration: 0.3 }}
                 className="flex h-full w-full flex-col overflow-hidden"
               >
-                <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
+                <div className="flex-shrink-0 border-b border-white/20 px-6 py-4 text-center bg-white/5 backdrop-blur-md">
                   <h2 className="text-xl font-semibold text-white">Processing Instructions</h2>
                   <p className="text-sm text-white">Add any specific instructions (optional)</p>
                 </div>
@@ -509,16 +509,16 @@ export default function IntextiveUploadPage() {
                     </div>
                   </div>
                 </div>
-                <div className="flex-shrink-0 border-t border-white/20 px-6 py-4 flex gap-3">
+                <div className="flex-shrink-0 border-t border-white/20 bg-white/5 backdrop-blur-md flex">
                   <Button
                     onClick={() => setCurrentStep("email")}
-                    className="flex-1 bg-white/10 text-white hover:bg-white/20 border border-white/30"
+                    className="flex-1 bg-white/10 text-white hover:bg-white/20 border border-white/30 rounded-none py-6 text-lg font-semibold"
                   >
                     Back
                   </Button>
                   <Button
                     onClick={handleNextFromInstructions}
-                    className="flex-1 bg-persian text-white hover:bg-persian/90"
+                    className="flex-1 bg-persian text-white hover:bg-persian/90 rounded-none py-6 text-lg font-semibold"
                   >
                     Next: Review
                   </Button>
@@ -536,7 +536,7 @@ export default function IntextiveUploadPage() {
                 transition={{ duration: 0.3 }}
                 className="flex h-full w-full flex-col overflow-hidden"
               >
-                <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
+                <div className="flex-shrink-0 border-b border-white/20 px-6 py-4 text-center bg-white/5 backdrop-blur-md">
                   <h2 className="text-xl font-semibold text-white">Review & Submit</h2>
                   <p className="text-sm text-white">Review your submission before processing</p>
                 </div>
@@ -642,18 +642,18 @@ export default function IntextiveUploadPage() {
                     </div>
                   )}
                 </div>
-                <div className="flex-shrink-0 border-t border-white/20 px-6 py-4 flex gap-3">
+                <div className="flex-shrink-0 border-t border-white/20 bg-white/5 backdrop-blur-md flex">
                   <Button
                     onClick={() => setCurrentStep("instructions")}
                     disabled={state === "loading"}
-                    className="flex-1 bg-white/10 text-white hover:bg-white/20 border border-white/30 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex-1 bg-white/10 text-white hover:bg-white/20 border border-white/30 disabled:cursor-not-allowed disabled:opacity-50 rounded-none py-6 text-lg font-semibold"
                   >
                     Back
                   </Button>
                   <Button
                     onClick={handleSubmit}
                     disabled={state === "loading"}
-                    className="flex-1 bg-persian text-white hover:bg-persian/90 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="flex-1 bg-persian text-white hover:bg-persian/90 disabled:cursor-not-allowed disabled:opacity-50 rounded-none py-6 text-lg font-semibold"
                   >
                     {state === "loading" ? (
                       <>
@@ -695,7 +695,7 @@ export default function IntextiveUploadPage() {
                 transition={{ duration: 0.3 }}
                 className="flex h-full w-full flex-col overflow-hidden"
               >
-                <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
+                <div className="flex-shrink-0 border-b border-white/20 px-6 py-4 text-center bg-white/5 backdrop-blur-md">
                   <h2 className="text-xl font-semibold text-white">Processing Your Request</h2>
                   <p className="text-sm text-white">Your PDF is being processed</p>
                 </div>
@@ -739,7 +739,7 @@ export default function IntextiveUploadPage() {
                     </div>
                   </div>
                 </div>
-                <div className="flex-shrink-0 border-t border-white/20 px-6 py-4">
+                <div className="flex-shrink-0 border-t border-white/20 bg-white/5 backdrop-blur-md">
                   <Button
                     onClick={() => {
                       setCurrentStep("upload");
@@ -753,7 +753,7 @@ export default function IntextiveUploadPage() {
                       setCountdown(300);
                     }}
                     disabled={countdown > 0}
-                    className="w-full bg-white/10 text-white hover:bg-white/20 border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-white/10 text-white hover:bg-white/20 border border-white/30 disabled:opacity-50 disabled:cursor-not-allowed rounded-none py-6 text-lg font-semibold"
                   >
                     {countdown > 0 ? "Processing..." : "Process Another File"}
                   </Button>
