@@ -249,19 +249,16 @@ export default function IntextiveUploadPage() {
             {steps.map((step, index) => (
               <div
                 key={step}
-                className={cn(
-                  "flex items-center gap-2 transition-colors",
-                  index <= currentStepIndex ? "text-white font-medium" : "text-white/50"
-                )}
+                className="flex items-center gap-2 transition-colors text-white"
               >
                 <div
                   className={cn(
-                    "flex h-8 w-8 items-center justify-center rounded-full border-2 transition-colors text-sm font-semibold",
+                    "flex h-8 w-8 items-center justify-center rounded-full border-2 transition-colors text-sm font-semibold text-white",
                     index < currentStepIndex
-                      ? "border-persian bg-persian text-white"
+                      ? "border-persian bg-persian"
                       : index === currentStepIndex
-                      ? "border-persian bg-persian/20 text-white"
-                      : "border-white/30 bg-white/5 text-white/50"
+                      ? "border-persian bg-persian/20"
+                      : "border-white/30 bg-white/5"
                   )}
                 >
                   {index < currentStepIndex ? (
@@ -272,7 +269,7 @@ export default function IntextiveUploadPage() {
                     index + 1
                   )}
                 </div>
-                <span className="text-xs sm:text-sm">{stepLabels[step]}</span>
+                <span className="text-xs sm:text-sm font-medium">{stepLabels[step]}</span>
               </div>
             ))}
           </div>
@@ -301,7 +298,7 @@ export default function IntextiveUploadPage() {
               >
                 <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
                   <h2 className="text-xl font-semibold text-white">Upload PDF</h2>
-                  <p className="text-sm text-white/70">Choose the file you want to process</p>
+                  <p className="text-sm text-white">Choose the file you want to process</p>
                 </div>
                 <div className="flex-1 overflow-hidden p-6 flex flex-col">
                   {/* File Input */}
@@ -327,7 +324,7 @@ export default function IntextiveUploadPage() {
                       Choose File
                     </Button>
                     {file && (
-                      <p className="mt-2 text-sm text-white/70 truncate">
+                      <p className="mt-2 text-sm text-white truncate">
                         Selected: {file.name}
                       </p>
                     )}
@@ -399,7 +396,7 @@ export default function IntextiveUploadPage() {
               >
                 <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
                   <h2 className="text-xl font-semibold text-white">Email Recipients</h2>
-                  <p className="text-sm text-white/70">Who should receive the output?</p>
+                  <p className="text-sm text-white">Who should receive the output?</p>
                 </div>
                 <div className="flex-1 overflow-auto p-6">
                   <div className="space-y-4">
@@ -420,7 +417,7 @@ export default function IntextiveUploadPage() {
                           "transition-colors duration-200"
                         )}
                       />
-                      <p className="mt-2 text-xs text-white/70">
+                      <p className="mt-2 text-xs text-white">
                         Press Enter or semicolon after each email address. The generated HTML will be emailed to each address.
                       </p>
                     </div>
@@ -439,7 +436,7 @@ export default function IntextiveUploadPage() {
                               <button
                                 type="button"
                                 onClick={() => removeEmail(email)}
-                                className="rounded-full p-0.5 text-white/70 transition-colors hover:bg-red-500/20 hover:text-red-300"
+                                className="rounded-full p-0.5 text-white transition-colors hover:bg-red-500/20 hover:text-red-300"
                                 title="Remove email"
                               >
                                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -489,7 +486,7 @@ export default function IntextiveUploadPage() {
               >
                 <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
                   <h2 className="text-xl font-semibold text-white">Processing Instructions</h2>
-                  <p className="text-sm text-white/70">Add any specific instructions (optional)</p>
+                  <p className="text-sm text-white">Add any specific instructions (optional)</p>
                 </div>
                 <div className="flex-1 overflow-auto p-6">
                   <div className="space-y-4">
@@ -541,7 +538,7 @@ export default function IntextiveUploadPage() {
               >
                 <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
                   <h2 className="text-xl font-semibold text-white">Review & Submit</h2>
-                  <p className="text-sm text-white/70">Review your submission before processing</p>
+                  <p className="text-sm text-white">Review your submission before processing</p>
                 </div>
                 <div className="flex-1 overflow-hidden p-6 flex flex-col">
                   {/* PDF File Preview - Takes most space */}
@@ -549,7 +546,7 @@ export default function IntextiveUploadPage() {
                     <div className="flex-shrink-0 mb-2 flex items-center justify-between">
                       <div>
                         <h3 className="text-sm font-semibold text-white">PDF File</h3>
-                        <p className="text-xs text-white/70 mt-1">{file?.name}</p>
+                        <p className="text-xs text-white mt-1">{file?.name}</p>
                       </div>
                       <Button
                         onClick={handleReplaceFile}
@@ -604,7 +601,7 @@ export default function IntextiveUploadPage() {
                         </Button>
                       </div>
                       <p className="text-sm text-white">
-                        {instructions || <em className="text-white/70">No specific instructions provided</em>}
+                        {instructions || <em className="text-white">No specific instructions provided</em>}
                       </p>
                     </div>
                   </div>
@@ -700,7 +697,7 @@ export default function IntextiveUploadPage() {
               >
                 <div className="flex-shrink-0 border-b border-white/20 px-6 py-4">
                   <h2 className="text-xl font-semibold text-white">Processing Your Request</h2>
-                  <p className="text-sm text-white/70">Your PDF is being processed</p>
+                  <p className="text-sm text-white">Your PDF is being processed</p>
                 </div>
                 <div className="flex-1 overflow-auto p-8 flex items-center justify-center">
                   <div className="w-full max-w-2xl">
@@ -709,7 +706,7 @@ export default function IntextiveUploadPage() {
                       <div className="text-7xl font-bold text-white mb-2">
                         {formatTime(countdown)}
                       </div>
-                      <p className="text-sm text-white/70">Estimated time remaining</p>
+                      <p className="text-sm text-white">Estimated time remaining</p>
                     </div>
 
                     {/* Progress Bar - Full Width */}
@@ -736,7 +733,7 @@ export default function IntextiveUploadPage() {
                           ))}
                         </ul>
                       </div>
-                      <p className="text-center text-sm text-white/70 mt-4">
+                      <p className="text-center text-sm text-white mt-4">
                         You can safely close this page. We&apos;ll send you an email when processing is complete.
                       </p>
                     </div>
