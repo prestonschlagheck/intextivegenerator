@@ -224,7 +224,6 @@ export default function IntextiveUploadPage() {
     processing: "Processing"
   };
   const currentStepIndex = steps.indexOf(currentStep);
-  const progress = ((currentStepIndex + 1) / steps.length) * 100;
 
   return (
     <div className="flex h-screen flex-col bg-bluewhale overflow-hidden relative p-8">
