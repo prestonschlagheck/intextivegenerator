@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { Button } from "@/components/primitives/Button";
@@ -270,7 +269,7 @@ export default function IntextiveUploadPage() {
             {/* Progress Line */}
             <div className="absolute top-[2.5rem] left-0 right-0 h-1 flex items-center px-[10%]">
               <div className="relative w-full h-full bg-white/10 rounded-full">
-                <motion.div
+        <motion.div
                   className="absolute top-0 left-0 h-full bg-gradient-to-r from-persian to-lagoon rounded-full"
                   initial={{ width: "0%" }}
                   animate={{ width: `${progress}%` }}
@@ -337,26 +336,26 @@ export default function IntextiveUploadPage() {
                   <p className="text-sm text-white">Choose the file you want to process</p>
                 </div>
                 <div className="flex-1 overflow-hidden p-6 flex flex-col">
-                  {/* File Input */}
+                {/* File Input */}
                   <div className="flex-shrink-0 mb-4">
-                    <input
-                      ref={fileInputRef}
-                      id="file-upload"
-                      type="file"
-                      accept="application/pdf"
-                      onChange={handleFileChange}
-                      disabled={state === "loading"}
-                      className="hidden"
-                    />
-                    <Button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      disabled={state === "loading"}
-                      className="w-full bg-persian text-white hover:bg-persian/90 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      Choose File
-                    </Button>
-                    {file && (
+                  <input
+                    ref={fileInputRef}
+                    id="file-upload"
+                    type="file"
+                    accept="application/pdf"
+                    onChange={handleFileChange}
+                    disabled={state === "loading"}
+                    className="hidden"
+                  />
+                  <Button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={state === "loading"}
+                    className="w-full bg-persian text-white hover:bg-persian/90 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    Choose File
+                  </Button>
+                  {file && (
                       <p className="mt-2 text-sm text-white truncate">
                         Selected: {file.name}
                       </p>
@@ -429,17 +428,17 @@ export default function IntextiveUploadPage() {
                     <div>
                       <label htmlFor="emails" className="mb-3 block text-lg font-medium text-white">
                         Email Addresses <span className="text-persian">*</span>
-                      </label>
+                  </label>
                       <input
-                        id="emails"
+                    id="emails"
                         type="email"
-                        value={emails}
-                        onChange={(e) => setEmails(e.target.value)}
+                    value={emails}
+                    onChange={(e) => setEmails(e.target.value)}
                         onKeyDown={handleEmailKeyDown}
                         placeholder="Type an email and press Enter"
-                        className={cn(
+                    className={cn(
                           "block w-full rounded-lg border border-white/30 bg-white px-4 py-4 text-base text-bluewhale placeholder:text-bluewhale/50",
-                          "focus:border-persian focus:outline-none focus:ring-2 focus:ring-persian/30",
+                      "focus:border-persian focus:outline-none focus:ring-2 focus:ring-persian/30",
                           "transition-colors duration-200"
                         )}
                       />
@@ -512,16 +511,16 @@ export default function IntextiveUploadPage() {
                     <div className="flex flex-col h-full">
                       <label htmlFor="instructions" className="mb-3 block text-lg font-medium text-white">
                         Instructions
-                      </label>
-                      <textarea
-                        id="instructions"
-                        value={instructions}
-                        onChange={(e) => setInstructions(e.target.value)}
+                  </label>
+                  <textarea
+                    id="instructions"
+                    value={instructions}
+                    onChange={(e) => setInstructions(e.target.value)}
                         placeholder="Add any specific instructions for processing the PDF (optional)"
-                        className={cn(
+                    className={cn(
                           "block w-full flex-1 rounded-lg border border-white/30 bg-white px-4 py-4 text-base text-bluewhale placeholder:text-bluewhale/50",
-                          "focus:border-persian focus:outline-none focus:ring-2 focus:ring-persian/30",
-                          "transition-colors duration-200",
+                      "focus:border-persian focus:outline-none focus:ring-2 focus:ring-persian/30",
+                      "transition-colors duration-200",
                           "resize-none min-h-[300px]"
                         )}
                       />
@@ -547,7 +546,7 @@ export default function IntextiveUploadPage() {
 
             {/* Step 4: Review */}
             {currentStep === "review" && (
-              <motion.div
+                    <motion.div
                 key="review"
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -558,7 +557,7 @@ export default function IntextiveUploadPage() {
                 <div className="flex-shrink-0 border-b border-white/20 px-6 py-4 text-center bg-white/5 backdrop-blur-md">
                   <h2 className="text-xl font-semibold text-white">Review & Submit</h2>
                   <p className="text-sm text-white">Review your submission before processing</p>
-                </div>
+                              </div>
                 <div className="flex-1 overflow-hidden p-6 flex gap-4">
                   {/* Left Half - PDF File Preview */}
                   <div className="flex-1 overflow-hidden rounded-lg border border-white/20 bg-white/5 p-4 flex flex-col">
@@ -566,14 +565,14 @@ export default function IntextiveUploadPage() {
                       <div>
                         <h3 className="text-sm font-semibold text-white">PDF File</h3>
                         <p className="text-xs text-white mt-1">{file?.name}</p>
-                      </div>
+                              </div>
                       <Button
                         onClick={handleReplaceFile}
                         className="text-xs bg-white/10 text-white hover:bg-white/20 px-3 py-1"
                       >
                         Replace
                       </Button>
-                    </div>
+                              </div>
                     {pdfPreviewUrl && (
                       <div className="flex-1 overflow-hidden rounded border border-white/20 relative">
                         <div className="absolute inset-0">
@@ -583,7 +582,7 @@ export default function IntextiveUploadPage() {
                             title="PDF Preview"
                             style={{ touchAction: 'pan-y' }}
                           />
-                        </div>
+                            </div>
                       </div>
                     )}
                   </div>
@@ -665,13 +664,13 @@ export default function IntextiveUploadPage() {
                       <span className="group-hover:scale-105 inline-block transition-transform">Submit</span>
                     )}
                   </button>
-                </div>
-              </motion.div>
+            </div>
+        </motion.div>
             )}
 
             {/* Step 5: Processing Status */}
             {currentStep === "processing" && (
-              <motion.div
+        <motion.div
                 key="processing"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -718,8 +717,8 @@ export default function IntextiveUploadPage() {
                       </div>
                       <p className="text-center text-sm text-white mt-4">
                         You can safely close this page. We&apos;ll send you an email when processing is complete.
-                      </p>
-                    </div>
+            </p>
+          </div>
                   </div>
                 </div>
                 <div className="flex-shrink-0 border-t border-white/20 bg-white/5 backdrop-blur-md">
@@ -740,12 +739,12 @@ export default function IntextiveUploadPage() {
                   >
                     {countdown > 0 ? "Processing..." : "Process Another File"}
                   </Button>
-                </div>
-              </motion.div>
+          </div>
+        </motion.div>
             )}
           </AnimatePresence>
-        </div>
-      </div>
+                </div>
+              </div>
     </div>
   );
 }
