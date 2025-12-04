@@ -239,29 +239,70 @@ export default function IntextiveUploadPage() {
       {/* Main Container - Full Height */}
       <div className="flex flex-1 flex-col overflow-hidden rounded-lg border border-white/20 bg-white/10 shadow-xl backdrop-blur-xl relative z-10">
         {/* Title at Top of Container - Foggy Bar */}
-        <div className="flex-shrink-0 border-b border-white/20 px-6 py-6 text-center bg-white/5 backdrop-blur-md">
-          <h1 className="text-3xl font-bold text-white">Intextive Generator</h1>
+        <div className="flex-shrink-0 border-b border-white/20 px-6 py-6 bg-white/5 backdrop-blur-md relative">
+          <h1 className="text-3xl font-bold text-white text-center">Intextive Generator</h1>
+          {/* Error Tag */}
+          {state === "error" && errorMessage && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="absolute top-4 right-4 flex items-center gap-2 rounded-lg border border-red-300/30 bg-red-500/20 px-3 py-2 backdrop-blur-sm"
+            >
+              <span className="text-sm font-semibold text-red-200">Workflow Error</span>
+              <button
+                onClick={() => {
+                  setState("idle");
+                  setErrorMessage("");
+                }}
+                className="rounded-full p-1 text-red-200 hover:bg-red-500/30 transition-colors"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </motion.div>
+          )}
         </div>
 
         {/* Progress Steps - Individual Sections */}
         <div className="flex-shrink-0 border-b border-white/20 bg-white/5 backdrop-blur-md">
-          <div className="flex items-stretch divide-x divide-white/20">
+          <div className="flex items-stretch relative">
+            {/* Progress Line */}
+            <div className="absolute top-[2.5rem] left-0 right-0 h-1 flex items-center px-[10%]">
+              <div className="relative w-full h-full bg-white/10 rounded-full">
+                <motion.div
+                  className="absolute top-0 left-0 h-full bg-gradient-to-r from-persian to-lagoon rounded-full"
+                  initial={{ width: "0%" }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                />
+              </div>
+            </div>
             {steps.map((step, index) => (
-              <div
+              <button
                 key={step}
+                onClick={() => {
+                  if (index <= currentStepIndex) {
+                    setCurrentStep(step);
+                    setErrorMessage("");
+                    setState("idle");
+                  }
+                }}
+                disabled={index > currentStepIndex}
                 className={cn(
-                  "flex-1 flex flex-col items-center justify-center py-4 px-2 transition-all",
+                  "flex-1 flex flex-col items-center justify-center py-4 px-2 transition-all relative z-10",
+                  index <= currentStepIndex ? "cursor-pointer hover:bg-white/10" : "cursor-not-allowed",
                   index <= currentStepIndex ? "bg-white/5" : "bg-transparent"
                 )}
               >
                 <div
                   className={cn(
-                    "flex h-12 w-12 items-center justify-center rounded-full border-2 transition-colors text-2xl font-bold text-white mb-2",
+                    "flex h-12 w-12 items-center justify-center rounded-full transition-all text-2xl font-bold text-white mb-2",
                     index < currentStepIndex
-                      ? "border-persian bg-persian"
+                      ? "border-4 border-persian bg-persian shadow-lg"
                       : index === currentStepIndex
-                      ? "border-persian bg-persian/20"
-                      : "border-white/30 bg-white/5"
+                      ? "border-4 border-persian bg-persian/20 shadow-md"
+                      : "border-4 border-white/5 bg-white/5"
                   )}
                 >
                   {index < currentStepIndex ? (
@@ -273,16 +314,8 @@ export default function IntextiveUploadPage() {
                   )}
                 </div>
                 <span className="text-xs font-semibold text-white text-center">{stepLabels[step]}</span>
-              </div>
+              </button>
             ))}
-          </div>
-          <div className="h-2 overflow-hidden bg-white/10">
-            <motion.div
-              className="h-full bg-gradient-to-r from-persian to-lagoon"
-              initial={{ width: "0%" }}
-              animate={{ width: `${progress}%` }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
-            />
           </div>
         </div>
 
@@ -364,13 +397,6 @@ export default function IntextiveUploadPage() {
                       </div>
                     </div>
                   )}
-
-                  {/* Error Message */}
-                  {state === "error" && errorMessage && (
-                    <div className="flex-shrink-0 rounded-lg border border-red-300/30 bg-red-500/10 px-4 py-3">
-                      <div className="text-sm text-red-200">{errorMessage}</div>
-                    </div>
-                  )}
                 </div>
                 <div className="flex-shrink-0 border-t border-white/20 bg-white/5 backdrop-blur-md">
                   <button
@@ -448,13 +474,6 @@ export default function IntextiveUploadPage() {
                         </div>
                       </div>
                     )}
-
-                    {/* Error Message */}
-                    {state === "error" && errorMessage && (
-                      <div className="rounded-lg border border-red-300/30 bg-red-500/10 px-4 py-3">
-                        <div className="text-sm text-red-200">{errorMessage}</div>
-                      </div>
-                    )}
                   </div>
                 </div>
                 <div className="flex-shrink-0 border-t border-white/20 bg-white/5 backdrop-blur-md flex">
@@ -484,14 +503,14 @@ export default function IntextiveUploadPage() {
                 transition={{ duration: 0.3 }}
                 className="flex h-full w-full flex-col overflow-hidden"
               >
-                <div className="flex-shrink-0 border-b border-white/20 px-6 py-4 text-center bg-white/5 backdrop-blur-md">
-                  <h2 className="text-xl font-semibold text-white">Processing Instructions</h2>
-                  <p className="text-sm text-white">Add any specific instructions (optional)</p>
+                <div className="flex-shrink-0 border-b border-white/20 px-6 py-6 text-center bg-white/5 backdrop-blur-md">
+                  <h2 className="text-2xl font-semibold text-white">Processing Instructions</h2>
+                  <p className="text-base text-white">Add any specific instructions (optional)</p>
                 </div>
                 <div className="flex-1 overflow-auto p-6">
                   <div className="space-y-4">
                     <div className="flex flex-col h-full">
-                      <label htmlFor="instructions" className="mb-2 block text-sm font-medium text-white">
+                      <label htmlFor="instructions" className="mb-3 block text-lg font-medium text-white">
                         Instructions
                       </label>
                       <textarea
@@ -500,7 +519,7 @@ export default function IntextiveUploadPage() {
                         onChange={(e) => setInstructions(e.target.value)}
                         placeholder="Add any specific instructions for processing the PDF (optional)"
                         className={cn(
-                          "block w-full flex-1 rounded-lg border border-white/30 bg-white px-4 py-3 text-sm text-bluewhale placeholder:text-bluewhale/50",
+                          "block w-full flex-1 rounded-lg border border-white/30 bg-white px-4 py-4 text-base text-bluewhale placeholder:text-bluewhale/50",
                           "focus:border-persian focus:outline-none focus:ring-2 focus:ring-persian/30",
                           "transition-colors duration-200",
                           "resize-none min-h-[300px]"
@@ -605,42 +624,6 @@ export default function IntextiveUploadPage() {
                       </p>
                     </div>
                   </div>
-
-                  {/* Error Message */}
-                  {state === "error" && errorMessage && (
-                    <div className="flex-shrink-0 mt-4 rounded-lg border border-red-300/30 bg-red-500/10 px-4 py-3">
-                      <div className="text-sm text-red-200 whitespace-pre-line">
-                        {errorMessage.split("\n").map((line, i) => {
-                          if (line.startsWith("Error Code:")) {
-                            return (
-                              <div key={i} className="mt-2 font-semibold text-red-100">
-                                {line}
-                              </div>
-                            );
-                          }
-                          if (line.startsWith("Troubleshooting:")) {
-                            return (
-                              <div key={i} className="mt-3 font-semibold text-red-100">
-                                {line}
-                              </div>
-                            );
-                          }
-                          if (/^\d+\./.test(line)) {
-                            return (
-                              <div key={i} className="ml-4 mt-1 text-red-200">
-                                {line}
-                              </div>
-                            );
-                          }
-                          return (
-                            <div key={i} className={i === 0 ? "font-semibold text-red-100" : "text-red-200"}>
-                              {line}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
                 </div>
                 <div className="flex-shrink-0 border-t border-white/20 bg-white/5 backdrop-blur-md flex">
                   <button
